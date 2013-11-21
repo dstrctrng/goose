@@ -5,3 +5,5 @@
 /output-*
 /.vagrant
 /.vagrant.d
+/vault
+/config/*.port

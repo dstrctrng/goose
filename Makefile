@@ -10,3 +10,6 @@ ready: vendor/cache
 vendor/cache:
 	@bundle --path vendor/bundle
 	@bundle cache
+
+foreman:
+	@env VAULT=$(PWD)/vault bundle exec foreman start
