@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -exfu
+
+shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+
+export PATH="$shome/bin:$PATH"
+
+export VBOX_USER_HOME="$shome/.vagrant.d"
+export VAGRANT_HOME="$shome/.vagrant.d"
+
+nm_release="precise"
+nm_provider="virtualbox"
+
+rm -rf $shome/output-${nm_provider}
+packer build $shome/${nm_release}/${nm_provider}.json
+cd $shome/output-${nm_provider}
+(set +f; ln -nfs *.ovf box.ovf)
+echo '{"provider":"'"${nm_provider}"'"}' > metadata.json
+tar cvfz $shome/boxes/${nm_provider}.box .
+vagrant box remove ${nm_release} ${nm_provider} 2>&- || true
+vagrant box add ${nm_release} $shome/boxes/${nm_provider}.box

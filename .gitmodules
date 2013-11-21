@@ -1,0 +1,9 @@
+[submodule "vendor/projects/offline-install"]
+	path = vendor/projects/offline-install
+	url = git@github.com:destructuring/offline-install
+[submodule "vendor/projects/awsme"]
+	path = vendor/projects/awsme
+	url = git@github.com:destructuring/awsme
+[submodule "vendor/projects/boxcar"]
+	path = vendor/projects/boxcar
+	url = git@github.com:destructuring/boxcar
