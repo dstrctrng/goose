@@ -1,5 +1,5 @@
 [submodule "vendor/projects/offline-install"]
-	path = vendor/projects/offline-install
+	path = vendor/projects/offline
 	url = git@github.com:destructuring/offline-install
 [submodule "vendor/projects/awsme"]
 	path = vendor/projects/awsme
