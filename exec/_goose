@@ -1,17 +1,23 @@
 #!/usr/bin/env bash
 
+shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+
 export VAULT="$shome/vault"
 export BOXCAR="$shome"
+export AWSME="$shome"
+export AWSME_CLI="$shome/vendor/projects/awsme_cli"
+
 export PORT_SSHD_FILE="$shome/config/sshd.port"
 export PORT_PROXY_FILE="$shome/config/proxy.port"
 
 export VBOX_USER_HOME="$shome/.vagrant.d"
 export VAGRANT_HOME="$shome/.vagrant.d"
 
-function require_boxcar {
+function require_ {
   source "$shome/vendor/projects/boxcar/libexec/_boxcar"
+  source "$shome/vendor/projects/awsme/libexec/_awsme"
 }
 
-require_boxcar # TODO alox-jason; wrap in a function to preserve args
+require_
 
 export PATH="$shome/bin:$PATH"

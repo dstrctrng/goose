@@ -8,3 +8,5 @@
 /vault
 /config/*.port
 /build
+/vendor/projects/awsme_cli
+/config/aws.*

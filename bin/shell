@@ -1,7 +1,1 @@
-#!/usr/bin/env bash
-
-shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
-
-source "$shome/libexec/_goose"
-
-exec $SHELL
+stub
