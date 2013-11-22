@@ -43,7 +43,6 @@
   "provisioners": [ {
     "type": "shell",
     "scripts": [
-      "bin/provision-vagrant",
       "bin/provision-ubuntu"
     ]
   } ]
