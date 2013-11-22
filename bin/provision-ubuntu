@@ -7,3 +7,12 @@ exec 2>&1
 
 sudo rm -rf /etc/udev/rules.d/70-persistent-net.rules /lib/udev/rules.d/75-persistent-net-generator.rules /dev/.udev /var/lib/dhcp3
 sudo mkdir -p /etc/udev/rules.d/70-persistent-net.rules
+
+tmp_sudo="$(mktemp -t XXXXXX)"
+cat > $tmp_sudo <<EOF
+ubuntu ALL=(ALL) NOPASSWD: ALL
+EOF
+
+sudo cp "$tmp_sudo" /etc/sudoers.d/10_ubuntu 
+rm -f "$tmp_sudo"
+sudo chmod 0440 /etc/sudoers.d/10_ubuntu
