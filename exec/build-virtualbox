@@ -14,3 +14,4 @@ echo '{"provider":"'"${nm_provider}"'"}' > metadata.json
 tar cvfz $shome/boxes/${nm_provider}.box .
 vagrant box remove ${nm_release} ${nm_provider} 2>&- || true
 vagrant box add ${nm_release} $shome/boxes/${nm_provider}.box
+train --provider ${nm_provider} --release ${nm_release} --clean
