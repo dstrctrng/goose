@@ -7,3 +7,4 @@
 /.vagrant.d
 /vault
 /config/*.port
+/build
