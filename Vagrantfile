@@ -6,18 +6,19 @@ VagrantPlugins::Shell::Plugin.make_provider(:static)
 ENV['VAGRANT_DEFAULT_PROVIDER'] ||= 'static'
 
 Vagrant.configure("2") do |config|
-  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.ssh.username = 'ubuntu'
+  config.vm.box = "precise"
 
   config.vm.provider :virtualbox do |vbox, override|
-    override.ssh.username = 'ubuntu'
-    override.vm.box = "precise"
     override.vm.base_mac = "auto"
   end
 
   config.vm.provider :static do |shell, override|
-    override.ssh.username = ENV['LOGNAME']
     override.vm.box = "static"
+    override.ssh.username = ENV['LOGNAME']
     shell.image = 'localhost'
     shell.script = shell.find_script("static")
   end
+
+  config.vm.synced_folder ".", "/vagrant", disabled: true
 end
