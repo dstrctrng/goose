@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
 shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
-export PATH="$shome/bin:$PATH"
 
-export VBOX_USER_HOME="$shome/.vagrant.d"
-export VAGRANT_HOME="$shome/.vagrant.d"
+source "$shome/libexec/_goose"
 
 pth_vagrant="$(bundle exec which vagrant 2>&- || true)"
 if [[ "$pth_vagrant" = "$shome/bin/vagrant" ]]; then

@@ -4,4 +4,4 @@ shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
 
 source "$shome/libexec/_goose"
 
-exec "$shome/vendor/projects/boxcar/libexec/train" "$@"
+exec $SHELL

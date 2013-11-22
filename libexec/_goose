@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+export VAULT="$shome/vault"
+export BOXCAR="$shome"
+export PORT_SSHD_FILE="$shome/config/sshd.port"
+export PORT_PROXY_FILE="$shome/config/proxy.port"
+
+export VBOX_USER_HOME="$shome/.vagrant.d"
+export VAGRANT_HOME="$shome/.vagrant.d"
+
+source "$shome/vendor/projects/boxcar/libexec/_boxcar"
+
+export PATH="$shome/bin:$PATH"
