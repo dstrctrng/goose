@@ -3,8 +3,6 @@ require "vagrant-shell/ssh-agent"
 
 VagrantPlugins::Shell::Plugin.make_provider(:static)
 
-ENV['VAGRANT_DEFAULT_PROVIDER'] ||= 'static'
-
 Vagrant.configure("2") do |config|
   config.ssh.username = 'ubuntu'
   config.vm.box = "precise"
