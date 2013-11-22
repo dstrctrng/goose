@@ -3,5 +3,4 @@
 source _jason
 require _goose
 
-unset BUNDLE_GEMFILE
 exec "$shome/vendor/projects/boxcar/libexec/train" "$@"

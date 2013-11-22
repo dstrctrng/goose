@@ -9,5 +9,4 @@ if [[ "$pth_vagrant" = "$shome/bin/vagrant" ]]; then
   exit 1
 fi
 
-unset BUNDLE_GEMFILE
 exec bundle exec vagrant "$@"

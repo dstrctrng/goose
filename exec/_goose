@@ -21,3 +21,5 @@ function require_ {
 require_
 
 export PATH="$shome/bin:$PATH"
+
+unset BUNDLE_GEMFILE
