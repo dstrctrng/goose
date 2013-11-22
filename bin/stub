@@ -1,3 +1,5 @@
-#!/usr/bin/env bash -efu
+#!/usr/bin/env bash
+
+set -efu
 
 exec bundle exec alox "$0" "$@" 
