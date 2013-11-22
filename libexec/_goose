@@ -8,6 +8,10 @@ export PORT_PROXY_FILE="$shome/config/proxy.port"
 export VBOX_USER_HOME="$shome/.vagrant.d"
 export VAGRANT_HOME="$shome/.vagrant.d"
 
-source "$shome/vendor/projects/boxcar/libexec/_boxcar"
+function require_boxcar {
+  source "$shome/vendor/projects/boxcar/libexec/_boxcar"
+}
+
+require_boxcar # TODO alox-jason; wrap in a function to preserve args
 
 export PATH="$shome/bin:$PATH"
