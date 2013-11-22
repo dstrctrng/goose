@@ -3,4 +3,5 @@
 source _jason
 require _goose
 
+unset BUNDLE_GEMFILE
 exec "$SHELL"
