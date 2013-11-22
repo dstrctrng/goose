@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -exfu
+set -efu
 
 shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
 
