@@ -10,6 +10,7 @@ export AWSME_CLI="$shome/vendor/projects/awsme_cli"
 
 export PORT_SSHD_FILE="$shome/config/sshd.port"
 export PORT_PROXY_FILE="$shome/config/proxy.port"
+export SSH_AGENT_FILE="$shome/config/ssh_agent"
 
 export VBOX_USER_HOME="$shome/.vagrant.d"
 export VAGRANT_HOME="$shome/.vagrant.d"

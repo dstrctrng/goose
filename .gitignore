@@ -11,3 +11,4 @@
 /vendor/projects/awsme_cli
 /config/aws.*
 /config/authorized_keys
+/config/ssh_agent
