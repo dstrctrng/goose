@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+
+export VAULT="$shome/vault"
+export BOXCAR="$shome"
+export PORT_SSHD_FILE="$shome/config/sshd.port"
+export PORT_PROXY_FILE="$shome/config/proxy.port"
+
+source "$shome/vendor/projects/boxcar/libexec/_boxcar"
+
+PATH="$shome/bin:$PATH"
+exec "$shome/vendor/projects/boxcar/libexec/train" "$@"
