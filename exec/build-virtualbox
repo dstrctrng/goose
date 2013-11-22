@@ -1,13 +1,7 @@
 #!/usr/bin/env bash
 
-set -efu
-
-shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
-
-export PATH="$shome/bin:$PATH"
-
-export VBOX_USER_HOME="$shome/.vagrant.d"
-export VAGRANT_HOME="$shome/.vagrant.d"
+source _jason
+require _goose
 
 nm_release="precise"
 nm_provider="virtualbox"

@@ -1,13 +1,1 @@
-#!/usr/bin/env bash
-
-shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
-
-source "$shome/libexec/_goose"
-
-pth_vagrant="$(bundle exec which vagrant 2>&- || true)"
-if [[ "$pth_vagrant" = "$shome/bin/vagrant" ]]; then
-  printf 'ERROR: vagrant not found, run make' 1>&2
-  exit 1
-fi
-
-exec bundle exec vagrant "$@"
+stub

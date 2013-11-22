@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+source _jason
+require _goose
+
+exec "$shome/vendor/projects/boxcar/libexec/train" "$@"
