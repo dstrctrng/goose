@@ -11,7 +11,7 @@ function remote_install {
   git clone https://github.com/destructuring/goose
   cd goose
   cp config/aws.yml.example config/aws.yml
-  make
+  /usr/local/rvm/bin/rvm-exec 1.9.3 make
 }
 
 if [[ "$#" = 0 ]]; then
