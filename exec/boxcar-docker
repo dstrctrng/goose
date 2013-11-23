@@ -23,12 +23,12 @@ function container_build {
   local nm_distro="$1"; shift
 
   sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install debootstrap
-  rm -rf image
-  mkdir image
+  rm -rf image; mkdir image
   sudo -E debootstrap --arch amd64 \
                   --include=language-pack-en,aptitude,wget,curl,git,rsync,make,openssh-server \
                   ${nm_distro} image http://archive.ubuntu.com/ubuntu/
 
+  # workarounds
   printf "%s\n%s\n" "#!/bin/bash" "exit 101" | sudo tee image/usr/sbin/policy-rc.d
   sudo chmod 0755 image/usr/sbin/policy-rc.d
 
@@ -37,20 +37,21 @@ function container_build {
   sudo -E chroot image apt-get install -y minimal^ server^ standard^
 
   # package updates
-  echo 'APT::Install-Recommends "0";' | sudo tee $prefix/etc/apt/apt.conf.d/00DisableInstallRecommends
+  local tmp_apt_disable="$(mktemp -t XXXXXX)"
+  cat > $tmp_apt_disable <<__EOF
+APT::Install-Recommends "0";
+__EOF
+  sudo cp "$tmp_apt_disable" "$prefix/etc/apt/apt.conf.d/00DisableInstallRecommends"
+  rm -f "$tmp_apt_disable"
 
   cat /etc/apt/sources.list \
     | env DISTRO="${nm_distro}" perl -ne 'if (m{^deb}) { s{(\S+\s+\S+)\s+(\S+)}{$beg=$1; $distro=$2; $distro =~ s{\w+}{$ENV{'DISTRO'}}; "$beg $distro"}e; print; }' | sudo tee image/etc/apt/sources.list > /dev/null
 
-  $sudoch update
-  $sudoch dist-upgrade -y
-  $sudoch safe-upgrade -y
-
   # sudoer permissions
-  tmp_sudo="$(mktemp -t XXXXXX)"
-  cat > $tmp_sudo <<EOF
-  ubuntu ALL=(ALL) NOPASSWD: ALL
-  EOF
+  local tmp_sudo="$(mktemp -t XXXXXX)"
+  cat > $tmp_sudo <<__EOF
+ubuntu ALL=(ALL) NOPASSWD: ALL
+__EOF
   sudo cp "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
   sudo chmod 0400 $prefix/etc/sudoers.d/90-cloud-init-users
   rm -f "$tmp_sudo"

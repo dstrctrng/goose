@@ -6,30 +6,27 @@
 function remote_build {
   set -exfu; exec 2>&1
 
-  echo ubuntu | sudo -S true; echo
-  container_build "$BUILD_IMAGE_PHASE"
+  echo ubuntu | sudo -S true
+  container_build
 }
 
 function container_build {
   local prefix=""
   local sudoch="sudo -E aptitude"
 
-
-
-
-
   # package updates
-  echo 'APT::Install-Recommends "0";' | sudo tee $prefix/etc/apt/apt.conf.d/00DisableInstallRecommends
-
-  $sudoch update
-  $sudoch dist-upgrade -y
-  $sudoch safe-upgrade -y
+  local tmp_apt_disable="$(mktemp -t XXXXXX)"
+  cat > $tmp_apt_disable <<__EOF
+APT::Install-Recommends "0";
+__EOF
+  sudo cp "$tmp_apt_disable" "$prefix/etc/apt/apt.conf.d/00DisableInstallRecommends"
+  rm -f "$tmp_apt_disable"
 
   # sudoer permissions
-  tmp_sudo="$(mktemp -t XXXXXX)"
-  cat > $tmp_sudo <<EOF
-  ubuntu ALL=(ALL) NOPASSWD: ALL
-  EOF
+  local tmp_sudo="$(mktemp -t XXXXXX)"
+  cat > $tmp_sudo <<__EOF
+ubuntu ALL=(ALL) NOPASSWD: ALL
+__EOF
   sudo cp "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
   sudo chmod 0400 $prefix/etc/sudoers.d/90-cloud-init-users
   rm -f "$tmp_sudo"
@@ -40,11 +37,11 @@ function container_build {
   sudo chmod 600 $prefix/home/ubuntu/.ssh/authorized_keys
 
   # create ubuntu user
-  sudo chroot image chown -R ubuntu:ubuntu /home/ubuntu
+  sudo chown -R ubuntu:ubuntu /home/ubuntu
 
   # cleanup
   sudo rm -rf /etc/udev/rules.d/70-persistent-net.rules /lib/udev/rules.d/75-persistent-net-generator.rules /dev/.udev /var/lib/dhcp3
   sudo mkdir -p /etc/udev/rules.d/70-persistent-net.rules
 }
 
-container_build "$@"
+remote_build "$@"
