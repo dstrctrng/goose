@@ -7,6 +7,7 @@ export VAULT="$shome/vault"
 export BOXCAR="$shome"
 export AWSME="$shome"
 export AWSME_CLI="$shome/vendor/projects/awsme_cli"
+export PKG_HOME="$shome/pkg"
 
 export PORT_SSHD_FILE="$shome/config/sshd.port"
 export PORT_PROXY_FILE="$shome/config/proxy.port"
@@ -22,6 +23,6 @@ function require_ {
 
 require_
 
-export PATH="$shome/bin:$PATH"
+export PATH="$shome/bin:$shome/pkg/bin:$shome/pkg/sbin:$PATH"
 
 unset BUNDLE_GEMFILE
