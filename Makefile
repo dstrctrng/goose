@@ -4,7 +4,7 @@ BOXCAR := $(GOOSE)
 AWSME := $(GOOSE)
 AWSME_CLI := $(GOOSE)/vendor/projects/awsme_cli
 
-export VAULT BOXCAR AWSME AWSME_CLI
+export GOOSE VAULT BOXCAR AWSME AWSME_CLI
 
 all: ready
 

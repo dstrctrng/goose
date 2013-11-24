@@ -2,4 +2,6 @@
 
 set -efu
 
+shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+export BUNDLE_GEMFILE="$shome/Gemfile"
 exec bundle exec alox "$0" "$@" 

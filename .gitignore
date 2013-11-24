@@ -12,3 +12,6 @@
 /config/aws.*
 /config/authorized_keys
 /config/ssh_agent
+/pkg
+/pkgsrc
+/pkgsrc-wip
