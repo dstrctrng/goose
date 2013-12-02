@@ -25,4 +25,4 @@ require_
 
 export PATH="$shome/bin:$shome/pkg/bin:$shome/pkg/sbin:$PATH"
 
-unset BUNDLE_GEMFILE
+unset BUNDLE_GEMFILE RUBYOPT

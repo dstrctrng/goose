@@ -3,5 +3,12 @@
 set -efu
 
 shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+
+if [[ -x "$shome/pkg/bin/bundle" ]]; then
+  PATH="$shome/pkg/bin:$shome/pkg/sbin:$PATH"
+fi
+
 export BUNDLE_GEMFILE="$shome/Gemfile"
+bundle check --path vendor/bundle 2>&1 > /dev/null || bundle --local --path vendor/bundle
+
 exec bundle exec alox "$0" "$@" 
