@@ -27,6 +27,9 @@ vendor/cache:
 foreman:
 	bundle exec foreman start
 
+cache:
+	$(PKGADD) squid openssh
+
 ruby: $(PKG_HOME)/bin/bundle
 
 $(PKG_HOME)/bin/bundle: $(PKG_HOME)/bin/ruby $(PKG_HOME)/bin/gem $(PKG_HOME)/bin/irb
