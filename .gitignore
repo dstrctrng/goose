@@ -1,7 +1,6 @@
 /.bundle
 /vendor/bundle
 /vendor/cache
-/packer_cache
 /output-*
 /.vagrant
 /.vagrant.d
