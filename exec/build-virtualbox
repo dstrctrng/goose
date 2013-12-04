@@ -7,6 +7,7 @@ nm_release="precise"
 nm_provider="virtualbox"
 
 rm -rf $shome/output-${nm_provider}
+rm -rf "$HOME/VirtualBox VMs/${nm_release}"
 packer build $shome/${nm_release}/${nm_provider}.json
 cd $shome/output-${nm_provider}
 (set +f; ln -nfs *.ovf box.ovf)
