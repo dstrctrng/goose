@@ -6,7 +6,7 @@ VagrantPlugins::Shell::Plugin.make_provider(:docker)
 
 Vagrant.configure("2") do |config|
   config.ssh.username = 'ubuntu'
-  config.vm.box = "precise-clean"
+  config.vm.box = ENV['box'] || ENV['BOX'] || "precise-clean"
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
   config.vm.provider :static do |static, override|
