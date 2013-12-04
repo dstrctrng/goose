@@ -9,4 +9,6 @@ if [[ "$pth_vagrant" = "$shome/bin/vagrant" ]]; then
   exit 1
 fi
 
+unset BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PATH
+export BUNDLE_GEMFILE="$shome/Gemfile"
 exec bundle exec vagrant "$@"

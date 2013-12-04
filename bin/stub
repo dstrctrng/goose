@@ -8,7 +8,7 @@ if [[ -x "$shome/pkg/bin/bundle" ]]; then
   PATH="$shome/pkg/bin:$shome/pkg/sbin:$PATH"
 fi
 
+unset BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PATH
 export BUNDLE_GEMFILE="$shome/Gemfile"
-bundle check --path vendor/bundle 2>&1 > /dev/null || bundle --local --path vendor/bundle
-
+bundle check --path vendor/bundle 2>&1 > /dev/null || bundle --local --path vendor/bundle > /dev/null
 exec bundle exec alox "$0" "$@" 
