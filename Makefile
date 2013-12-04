@@ -10,6 +10,8 @@ export GOOSE VAULT BOXCAR AWSME AWSME_CLI PKG_HOME
 PKG_ID := $(shell uname -s)$(shell echo $(PKG_HOME) | tr / _)
 PKGADD := env PKG_PATH=$(VAULT)/packages/$(PKG_ID)/All pkg_add
 
+.PHONY: pkgsrc
+
 all: ready
 
 ready: vendor/cache
@@ -27,7 +29,10 @@ vendor/cache:
 foreman:
 	bundle exec foreman start
 
-cache:
+pkgsrc:
+	$(PKGADD) getopt figlet coreutils
+
+cache: pkgsrc
 	$(PKGADD) squid openssh
 
 ruby: $(PKG_HOME)/bin/bundle
