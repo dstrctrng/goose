@@ -14,17 +14,13 @@ PKGADD := env PKG_PATH=$(VAULT)/packages/$(PKG_ID)/All pkg_add
 
 all: ready
 
-ready: vendor/cache
+ready:
 	git submodule update --init --recursive
 	cd vendor/projects/boxcar && $(MAKE)
 	cd vendor/projects/offline && $(MAKE)
 	cd vendor/projects/awsme && $(MAKE)
 	cd vendor/projects/awsme && $(MAKE) cli
 	bundle check --path vendor/bundle 2>&1 >/dev/null || bundle --local --path vendor/bundle
-
-vendor/cache:
-	bundle --path vendor/bundle
-	bundle cache
 
 foreman:
 	bundle exec foreman start

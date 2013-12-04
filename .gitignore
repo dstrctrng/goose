@@ -1,6 +1,5 @@
 /.bundle
 /vendor/bundle
-/vendor/cache
 /output-*
 /.vagrant
 /.vagrant.d
