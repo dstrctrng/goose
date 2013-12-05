@@ -8,6 +8,7 @@ gem "foreman"
 # vagrant
 gem "tnargav", "~> 1.2.2"
 gem "vagrant-shell"
+gem "vagrant-aws"
 
 # alox
 gem "alox"
