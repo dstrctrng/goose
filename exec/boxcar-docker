@@ -114,6 +114,7 @@ __EOF
 
   sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install lxc/precise-backports
   sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install lxc-docker lxc-templates cgroup-lite libpam-cap libcap2-bin debootstrap
+  sudo usermod -a -G docker ubuntu
 }
 
 if [[ "$#" = 0 ]]; then
@@ -147,8 +148,8 @@ function main {
   case "${BUILD_IMAGE_PHASE:-}" in
     install)
       standard_hook "$bootstrap" "$@"
-      cat $FLAGS_cachedir/docker-${OVERRIDE_release}.tar | ssh -F $pth_ssh_config default sudo docker import - "${OVERRIDE_release}"
-      ssh -F $pth_ssh_config default sudo docker run "${OVERRIDE_release}" true
+      cat $FLAGS_cachedir/docker-${OVERRIDE_release}.tar | ssh -F $pth_ssh_config default docker import - "${OVERRIDE_release}"
+      ssh -F $pth_ssh_config default docker run "${OVERRIDE_release}" true
       ;;
     *)
       standard_hook "$bootstrap" "$@"
