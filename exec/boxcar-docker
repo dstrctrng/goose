@@ -85,6 +85,7 @@ __EOF
 function docker_install {
   curl https://get.docker.io/gpg | sudo apt-key add -
   echo "deb http://get.docker.io/ubuntu docker main" | sudo tee /etc/apt/sources.list.d/docker.list
+  echo "deb http://us.archive.ubuntu.com/ubuntu precise-backports main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/backports.list
   sudo aptitude update
 
   sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install lxc-docker lxc-templates cgroup-lite libpam-cap libcap2-bin debootstrap
