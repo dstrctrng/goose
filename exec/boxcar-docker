@@ -22,6 +22,7 @@ function container_build {
 
   local nm_distro="$1"; shift
 
+  # minimal install with debootstrap
   sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install debootstrap
   rm -rf image; mkdir image
   sudo -E debootstrap --arch amd64 \
@@ -32,8 +33,12 @@ function container_build {
   printf "%s\n%s\n" "#!/bin/bash" "exit 101" | sudo tee image/usr/sbin/policy-rc.d
   sudo chmod 0755 image/usr/sbin/policy-rc.d
 
-  sudo rsync -ia /etc/apt/apt.conf.d/01proxy image/etc/apt/apt.conf.d/01proxy
+  # http cache/proxy
+  if [[ -f "/etc/apt/apt.conf.d/01proxy" ]]; then
+    sudo rsync -ia /etc/apt/apt.conf.d/01proxy image/etc/apt/apt.conf.d/01proxy
+  fi
 
+  # update install with server distribution
   sudo -E chroot image apt-get install -y minimal^ server^ standard^
 
   # package updates
