@@ -4,4 +4,8 @@ source _jason
 require _goose
 
 unset BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PATH
-exec "$SHELL"
+if [[ "$#" > 0 ]]; then
+  "$@"
+else
+  exec "$SHELL"
+fi
