@@ -18,7 +18,6 @@ function remote_install {
 
 function container_build {
   local prefix="image"
-  local sudoch="sudo -E chroot image"
 
   local nm_distro="$1"; shift
 
@@ -26,7 +25,7 @@ function container_build {
   sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install debootstrap
   rm -rf image; mkdir image
   sudo -E debootstrap --arch amd64 \
-                  --include=language-pack-en,aptitude,wget,curl,git,rsync,make,bsdtar,netcat,openssh-server,dkms \
+                  --include=aptitude,openssh-server \
                   ${nm_distro} image http://archive.ubuntu.com/ubuntu/
 
   # workarounds
@@ -52,18 +51,19 @@ __EOF
 
   # create ubuntu user
   sudo chroot image useradd -u 1000 -U -m ubuntu -s /bin/bash
-  sudo chroot image chown -R ubuntu:ubuntu /home/ubuntu
 
   # allow vagrant ssh using insecure key
   sudo install -d -m 0700 $prefix/home/ubuntu/.ssh
   echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key" | sudo tee $prefix/home/ubuntu/.ssh/authorized_keys
   sudo chmod 600 $prefix/home/ubuntu/.ssh/authorized_keys
+  sudo chown -R ubuntu:ubuntu $prefix/home/ubuntu
 
   # cleanup
   sudo rm -rf /etc/udev/rules.d/70-persistent-net.rules /lib/udev/rules.d/75-persistent-net-generator.rules /dev/.udev /var/lib/dhcp3
   sudo mkdir -p /etc/udev/rules.d/70-persistent-net.rules
-  sudo rm -f image/etc/apt/apt.conf.d/01proxy
   sudo chroot image aptitude clean
+
+  sudo rm -f image/etc/apt/apt.conf.d/01proxy
 
   # sshd requirements
   sudo install -d -m 0755 -o root -g root /var/run/sshd

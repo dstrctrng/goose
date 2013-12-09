@@ -43,7 +43,7 @@
   "provisioners": [ {
     "type": "shell",
     "scripts": [
-      "bin/provision-ubuntu"
+      "exec/boxcar-vbox"
     ]
   } ]
 }
