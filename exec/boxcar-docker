@@ -41,17 +41,6 @@ function container_build {
   # update install with server distribution
   sudo -E chroot image apt-get install -y minimal^ server^ standard^
 
-  # package updates
-  local tmp_apt_disable="$(mktemp -t XXXXXX)"
-  cat > $tmp_apt_disable <<__EOF
-APT::Install-Recommends "0";
-__EOF
-  sudo cp "$tmp_apt_disable" "$prefix/etc/apt/apt.conf.d/00DisableInstallRecommends"
-  rm -f "$tmp_apt_disable"
-
-  cat /etc/apt/sources.list \
-    | env DISTRO="${nm_distro}" perl -ne 'if (m{^deb}) { s{(\S+\s+\S+)\s+(\S+)}{$beg=$1; $distro=$2; $distro =~ s{\w+}{$ENV{'DISTRO'}}; "$beg $distro"}e; print; }' | sudo tee image/etc/apt/sources.list > /dev/null
-
   # sudoer permissions
   local tmp_sudo="$(mktemp -t XXXXXX)"
   cat > $tmp_sudo <<__EOF

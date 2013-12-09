@@ -14,7 +14,7 @@
     "boot_wait": "4s",
     "disk_size": 10140,
     "guest_os_type": "Ubuntu_64",
-    "http_directory": "precise",
+    "http_directory": "config/precise",
     "iso_url": "http://releases.ubuntu.com/12.04/ubuntu-12.04.3-server-amd64.iso",
     "iso_checksum": "2cbe868812a871242cdcdd8f2fd6feb9",
     "iso_checksum_type": "md5",
