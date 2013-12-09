@@ -101,8 +101,8 @@ __EOF
   echo "deb http://get.docker.io/ubuntu docker main" | sudo tee /etc/apt/sources.list.d/docker.list
   sudo aptitude update
 
-  sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install --install-recommends lxc/precise-backports
-  sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install --install-recommends lxc-docker
+  sudo env DEBIAN_FRONTEND=noninteractive apt-get -y install --install-recommends lxc/precise-backports
+  sudo env DEBIAN_FRONTEND=noninteractive apt-get -y install --install-recommends lxc-docker
   sudo usermod -a -G docker ubuntu
 }
 
