@@ -26,7 +26,7 @@ function container_build {
   sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install debootstrap
   rm -rf image; mkdir image
   sudo -E debootstrap --arch amd64 \
-                  --include=language-pack-en,aptitude,wget,curl,git,rsync,make,openssh-server \
+                  --include=language-pack-en,aptitude,wget,curl,git,rsync,make,bsdtar,netcat,openssh-server,dkms \
                   ${nm_distro} image http://archive.ubuntu.com/ubuntu/
 
   # workarounds
