@@ -22,7 +22,8 @@ function container_build {
   local nm_distro="$1"; shift
 
   # minimal install with debootstrap
-  sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install debootstrap
+  source /etc/lsb-release
+  sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install -t "${DISTRIB_CODENAME}-backports" debootstrap
   rm -rf image; mkdir image
   sudo -E debootstrap --arch amd64 --include=aptitude,openssh-server \
             ${nm_distro} image http://archive.ubuntu.com/ubuntu/
