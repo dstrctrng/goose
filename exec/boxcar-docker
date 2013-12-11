@@ -24,9 +24,8 @@ function container_build {
   # minimal install with debootstrap
   sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install debootstrap
   rm -rf image; mkdir image
-  sudo -E debootstrap --arch amd64 \
-                  --include=aptitude,openssh-server \
-                  ${nm_distro} image http://archive.ubuntu.com/ubuntu/
+  sudo -E debootstrap --arch amd64 --include=aptitude,openssh-server \
+            ${nm_distro} image http://archive.ubuntu.com/ubuntu/
 
   # workarounds
   printf "%s\n%s\n" "#!/bin/bash" "exit 101" | sudo tee image/usr/sbin/policy-rc.d
@@ -40,14 +39,18 @@ function container_build {
   # update install with server distribution
   sudo -E chroot image apt-get install -y minimal^ server^ standard^
 
-  # sudoer permissions
-  local tmp_sudo="$(mktemp -t XXXXXX)"
-  cat > $tmp_sudo <<__EOF
-ubuntu ALL=(ALL) NOPASSWD: ALL
+  # complete list of apt repos
+  local tmp_sources="$(mktemp -t XXXXXX)"
+  cat > $tmp_sources << __EOF
+deb http://security.ubuntu.com/ubuntu ${nm_distro}-security main restricted universe multiverse
+deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro} main restricted universe multiverse
+deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro}-backports main restricted universe multiverse
+deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro}-updates main restricted universe multiverse
 __EOF
-  sudo cp "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
-  sudo chmod 0400 $prefix/etc/sudoers.d/90-cloud-init-users
-  rm -f "$tmp_sudo"
+  sudo cp "$tmp_sources" $prefix/etc/apt/sources.list
+  sudo chmod 0644 $prefix/etc/apt/sources.list
+  rm -f "$tmp_sources"
+  sudo chroot image aptitude update
 
   # create ubuntu user
   sudo chroot image useradd -u 1000 -U -m ubuntu -s /bin/bash
@@ -57,6 +60,15 @@ __EOF
   echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key" | sudo tee $prefix/home/ubuntu/.ssh/authorized_keys
   sudo chmod 600 $prefix/home/ubuntu/.ssh/authorized_keys
   sudo chown -R ubuntu:ubuntu $prefix/home/ubuntu
+
+  # sudoer permissions
+  local tmp_sudo="$(mktemp -t XXXXXX)"
+  cat > $tmp_sudo <<__EOF
+ubuntu ALL=(ALL) NOPASSWD: ALL
+__EOF
+  sudo cp "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
+  sudo chmod 0400 $prefix/etc/sudoers.d/90-cloud-init-users
+  rm -f "$tmp_sudo"
 
   # cleanup
   sudo rm -rf /etc/udev/rules.d/70-persistent-net.rules /lib/udev/rules.d/75-persistent-net-generator.rules /dev/.udev /var/lib/dhcp3
