@@ -50,6 +50,8 @@ $(PKG_HOME)/bin/ruby: $(PKG_HOME)/bin/ruby193
 
 $(PKG_HOME)/bin/gem: $(PKG_HOME)/bin/gem193
 	ln -nfs $(shell basename $<) $@
+	$@ install rubygems-update
+	@env PATH="$(PKG_HOME)/bin:$(PATH)" update_rubygems
 
 $(PKG_HOME)/bin/irb: $(PKG_HOME)/bin/irb193
 	ln -nfs $(shell basename $<) $@
