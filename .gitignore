@@ -10,3 +10,8 @@
 /pkg
 /pkgsrc
 /pkgsrc-wip
+
+/config/authorized_keys
+/config/proxy.port
+/config/ssh_agent
+/config/sshd.port
