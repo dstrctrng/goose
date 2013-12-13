@@ -43,7 +43,7 @@
   "provisioners": [ {
     "type": "shell",
     "scripts": [
-      "exec/boxcar-vbox"
+      "exec/boxcar-virtualbox"
     ]
   } ]
 }

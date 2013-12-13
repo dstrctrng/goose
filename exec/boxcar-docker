@@ -17,11 +17,10 @@ function remote_install {
 }
 
 function container_build {
+  local nm_distro="$1"; shift
   local prefix="image"
 
-  local nm_distro="$1"; shift
-
-  # minimal install with debootstrap
+  # minimal install
   source /etc/lsb-release
   sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install -t "${DISTRIB_CODENAME}-backports" debootstrap
   rm -rf image; mkdir image
