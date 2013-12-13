@@ -1,17 +1,33 @@
 #!/usr/bin/env bash
 
 #/ NAME
-#/     boxcar-docker - debootstrap provisioning script
+#/     boxcar-goose - set up the golden goose for image building
 
 function remote_install {
   set -exfu; cd
 
+  sudo aptitude install -y ruby1.9.3 ruby1.9.1-full
+  sudo aptitude install -y libxml2-dev libxslt-dev
   sudo aptitude install -y unzip
+  sudo aptitude install -y figlet
 
-  git clone https://github.com/destructuring/goose
-  cd goose
+  env LANG=C sudo aptitude install -y openjdk-7-jre-headless
+
+  sudo gem1.9.3 install bundler
+
+  sudo install -o ubuntu -g ubuntu -d -m 0755 /opt/goose
+  git clone git@github.com:destructuring/goose /opt/goose
+  cd /opt/goose
   cp config/aws.yml.example config/aws.yml
-  /usr/local/rvm/bin/rvm-exec 1.9.3 make
+  make
+
+  local pth_docker="$(which docker 2>&- || true)"
+  if [[ -x "$pth_docker" ]]; then
+    bin/shell vagrant box add precise boxes/docker.box
+  fi
+
+  bin/shell vagrant box add precise boxes/aws.box
+  bin/shell vagrant box add static boxes/static.box
 }
 
 if [[ "$#" = 0 ]]; then
