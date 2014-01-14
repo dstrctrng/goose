@@ -6,14 +6,22 @@
 function remote_install {
   set -exfu; cd
 
-  sudo aptitude install -y ruby1.9.3 ruby1.9.1-full
   sudo aptitude install -y libxml2-dev libxslt-dev
   sudo aptitude install -y unzip
   sudo aptitude install -y figlet
 
   env LANG=C sudo aptitude install -y openjdk-7-jre-headless
 
-  sudo gem1.9.3 install bundler
+  if [[ -f /etc/profile.d/rvm.sh ]]; then
+    set +efu
+    source /etc/profile.d/rvm.sh
+    rvm use 1.9.3
+    set -efu
+
+  else
+    sudo aptitude install -y ruby1.9.3 ruby1.9.1-full
+    sudo gem1.9.3 install bundler
+  fi
 
   sudo install -o ubuntu -g ubuntu -d -m 0755 /opt/goose
   git clone git@github.com:destructuring/goose /opt/goose
