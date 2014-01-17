@@ -6,7 +6,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    alox (0.0.8)
+    alox (0.0.9)
     alox-jason (0.0.33)
     builder (3.2.2)
     childprocess (0.3.9)
