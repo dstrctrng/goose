@@ -48,7 +48,7 @@ GEM
       net-ssh (~> 2.6.6)
     vagrant-aws (0.4.0)
       fog (~> 1.15.0)
-    vagrant-shell (0.2.16)
+    vagrant-shell (0.2.17)
 
 PLATFORMS
   ruby
