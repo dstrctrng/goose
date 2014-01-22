@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
-chmod 755 "$shome" "$shome/config"
-chmod 644 "$shome/config/authorized_keys"
