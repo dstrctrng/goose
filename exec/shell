@@ -5,7 +5,7 @@ require _goose
 
 unset BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PATH
 if [[ "$#" > 0 && "${1%%-*}" != "" ]]; then
-  "$@"
+  exec "$@"
 else
   exec "$SHELL" "$@"
 fi
