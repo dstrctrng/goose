@@ -40,27 +40,49 @@ deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro} main restricted universe m
 deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro}-backports main restricted universe multiverse
 deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro}-updates main restricted universe multiverse
 __EOF
-  sudo cp "$tmp_sources" $prefix/etc/apt/sources.list
-  sudo chmod 0644 $prefix/etc/apt/sources.list
+  sudo install -o root -g root -m 0644 $tmp_sources $prefix/etc/apt/sources.list
   rm -f "$tmp_sources"
   sudo aptitude update
 
   # create ubuntu user
   # already done with Packer
 
-  # allow vagrant ssh using insecure key
-  sudo install -d -m 0700 $prefix/home/ubuntu/.ssh
-  echo "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key" | sudo tee $prefix/home/ubuntu/.ssh/authorized_keys
-  sudo chmod 600 $prefix/home/ubuntu/.ssh/authorized_keys
-  sudo chown -R ubuntu:ubuntu $prefix/home/ubuntu
+  # cloud init
+  local tmp_cloud="$(mktemp -t XXXXXX)"
+  sudo mkdir -p $prefix/var/lib/cloud/seed/nocloud
+  cat > $tmp_cloud << __EOF
+instance-id: precise
+local-hostname: precise
+public-keys:
+  vagrant: [$(curl https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub), '']
+__EOF
+  sudo install -o root -g root -m 0600 $tmp_cloud $prefix/var/lib/cloud/seed/nocloud/meta-data
+
+  cat > $tmp_cloud  << __EOF
+#cloud-config
+
+disable_root: 1
+__EOF
+  sudo install -o root -g root -m 0600 $tmp_cloud $prefix/var/lib/cloud/seed/nocloud/user-data
+
+  rm -f $tmp_cloud
+
+  # run and verify cloud init
+  sudo /usr/bin/cloud-init start-local || true
+  sudo id -a ubuntu
+  sudo sudo id -a ubuntu
+  sudo cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
+  sudo rm -f $prefix/var/lib/cloud/seed/nocloud/meta-data
 
   # sudoer permissions
   local tmp_sudo="$(mktemp -t XXXXXX)"
   cat > $tmp_sudo <<__EOF
-ubuntu ALL=(ALL) NOPASSWD: ALL
+# ubuntu user is default user in cloud-images.
+# It needs passwordless sudo functionality.
+ubuntu ALL=(ALL) NOPASSWD:ALL
 __EOF
-  sudo cp "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
-  sudo chmod 0400 $prefix/etc/sudoers.d/90-cloud-init-users
+
+  sudo install -o root -g root -m 0400 "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
   rm -f "$tmp_sudo"
 
   # cleanup
