@@ -1,3 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-exec vagrant ssh -- "$@"
+set -e
+
+if [[ "$#" == 0 || "${1%%-*}" == "" ]]; then
+  exec vagrant ssh -- "$@"
+else
+  nm_host="$1"; shift
+  exec vagrant ssh "$nm_host" -- "$@"
+fi
