@@ -19,6 +19,7 @@ function remote_install {
 function container_build {
   local nm_distro="$1"; shift
   local prefix="image"
+  local sudo="sudo chroot image"
 
   # minimal install
   source /etc/lsb-release
@@ -32,7 +33,7 @@ function container_build {
   sudo chmod 0755 $prefix/usr/sbin/policy-rc.d
 
   # pretend upstart services always succeed
-  sudo chroot image dpkg-divert --local --rename --add /sbin/initctl
+  ${sudo} dpkg-divert --local --rename --add /sbin/initctl
   sudo ln -s /bin/true $prefix/sbin/initctl
 
   # update install with server distribution
@@ -48,10 +49,10 @@ deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro}-updates main restricted un
 __EOF
   sudo install -o root -g root -m 0644 $tmp_sources $prefix/etc/apt/sources.list
   rm -f "$tmp_sources"
-  sudo chroot image aptitude update
+  ${sudo} aptitude update
 
   # create ubuntu user
-  sudo chroot image useradd -u 1000 -U -m ubuntu -s /bin/bash -G adm,dialout,cdrom,floppy,audio,dip,video,plugdev,netdev
+  ${sudo} useradd -u 1000 -U -m ubuntu -s /bin/bash -G adm,dialout,cdrom,floppy,audio,dip,video,plugdev,netdev
 
   # sudo permissions
   local tmp_sudo="$(mktemp -t XXXXXX)"
@@ -78,19 +79,19 @@ __EOF
   cat > $tmp_cloud  << __EOF
 #cloud-config
 
-disable_root: 1
+disable_root: 0
 __EOF
   sudo install -o root -g root -m 0600 $tmp_cloud $prefix/var/lib/cloud/seed/nocloud/user-data
 
   rm -f $tmp_cloud
 
   # run and verify cloud init
-  sudo chroot image cloud-init start-local || true
-  sudo chroot image cloud-init-cfg all config
-  sudo chroot image cloud-init-cfg all final
-  sudo chroot image id -a ubuntu
-  sudo chroot image sudo id -a ubuntu
-  sudo chroot image cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
+  ${sudo} cloud-init start-local || true
+  ${sudo} cloud-init-cfg all config
+  ${sudo} cloud-init-cfg all final
+  ${sudo} id -a ubuntu
+  ${sudo} sudo id -a ubuntu
+  ${sudo} cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
   sudo rm -f $prefix/var/lib/cloud/seed/nocloud/meta-data
 
   # sshd requirements
@@ -99,7 +100,7 @@ __EOF
   # cleanup
   sudo rm -rf /etc/udev/rules.d/70-persistent-net.rules /lib/udev/rules.d/75-persistent-net-generator.rules /dev/.udev /var/lib/dhcp3
   sudo mkdir -p /etc/udev/rules.d/70-persistent-net.rules
-  sudo chroot image aptitude clean
+  ${sudo} aptitude clean
 
   # docker image
   sudo tar cfp docker-${nm_distro}.tar -C image .

@@ -6,31 +6,25 @@
 function remote_build {
   set -exfu; cd
 
-  virtualbox_install
   container_build "$BUILD_IMAGE_PHASE"
 }
 
 function remote_install {
   set -exfu; cd
-
-  virtualbox_install
 }
 
 function container_build {
   local nm_distro="$1"; shift
   local prefix=""
+  local sudo="sudo"
 
   # minimal install
-  # already done with Packer
+  source /etc/lsb-release
+  sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install -t "${DISTRIB_CODENAME}-backports" debootstrap
 
   # workarounds
-  # none needed
-
-  # http cache/proxy
-  # not sure what the virtualbox host looks like
 
   # update install with server distribution
-  # already done with Packer
 
   # complete list of apt repos
   local tmp_sources="$(mktemp -t XXXXXX)"
@@ -42,10 +36,20 @@ deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro}-updates main restricted un
 __EOF
   sudo install -o root -g root -m 0644 $tmp_sources $prefix/etc/apt/sources.list
   rm -f "$tmp_sources"
-  sudo aptitude update
+  ${sudo} aptitude update
 
   # create ubuntu user
-  # already done with Packer
+
+  # sudo permissions
+  local tmp_sudo="$(mktemp -t XXXXXX)"
+  cat > $tmp_sudo <<__EOF
+# ubuntu user is default user in cloud-images.
+# It needs passwordless sudo functionality.
+ubuntu ALL=(ALL) NOPASSWD:ALL
+__EOF
+
+  sudo install -o root -g root -m 0400 "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
+  rm -f "$tmp_sudo"
 
   # cloud init
   local tmp_cloud="$(mktemp -t XXXXXX)"
@@ -61,38 +65,25 @@ __EOF
   cat > $tmp_cloud  << __EOF
 #cloud-config
 
-disable_root: 1
+disable_root: 0
 __EOF
   sudo install -o root -g root -m 0600 $tmp_cloud $prefix/var/lib/cloud/seed/nocloud/user-data
 
   rm -f $tmp_cloud
 
   # run and verify cloud init
-  sudo /usr/bin/cloud-init start-local || true
-  sudo id -a ubuntu
-  sudo sudo id -a ubuntu
-  sudo cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
+  ${sudo} cloud-init start-local || true
+  ${sudo} cloud-init-cfg all config
+  ${sudo} cloud-init-cfg all final
+  ${sudo} id -a ubuntu
+  ${sudo} sudo id -a ubuntu
+  ${sudo} cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
   sudo rm -f $prefix/var/lib/cloud/seed/nocloud/meta-data
-
-  # sudoer permissions
-  local tmp_sudo="$(mktemp -t XXXXXX)"
-  cat > $tmp_sudo <<__EOF
-# ubuntu user is default user in cloud-images.
-# It needs passwordless sudo functionality.
-ubuntu ALL=(ALL) NOPASSWD:ALL
-__EOF
-
-  sudo install -o root -g root -m 0400 "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
-  rm -f "$tmp_sudo"
 
   # cleanup
   sudo rm -rf /etc/udev/rules.d/70-persistent-net.rules /lib/udev/rules.d/75-persistent-net-generator.rules /dev/.udev /var/lib/dhcp3
   sudo mkdir -p /etc/udev/rules.d/70-persistent-net.rules
-  sudo aptitude clean
-}
-
-function virtualbox_install {
-  true
+  ${sudo} aptitude clean
 }
 
 # entry point
@@ -100,7 +91,12 @@ function main {
   BUILD_IMAGE_PHASE=precise
   exec 2>&1
   echo ubuntu | sudo -S true
-  remote_build "$@"
+
+  case "${BUILD_IMAGE_PHASE:-}" in
+    *)
+      remote_build "$@"
+      ;;
+  esac
 }
 
 main "$@"
