@@ -31,10 +31,9 @@ function container_build {
   printf "%s\n%s\n" "#!/bin/bash" "exit 101" | sudo tee $prefix/usr/sbin/policy-rc.d
   sudo chmod 0755 $prefix/usr/sbin/policy-rc.d
 
-  # http cache/proxy
-  if [[ -f "/etc/apt/apt.conf.d/01proxy" ]]; then
-    sudo rsync -ia /etc/apt/apt.conf.d/01proxy $prefix/etc/apt/apt.conf.d/01proxy
-  fi
+  # pretend upstart services always succeed
+  sudo chroot image dpkg-divert --local --rename --add /sbin/initctl
+  sudo ln -s /bin/true $prefix/sbin/initctl
 
   # update install with server distribution
   sudo -E chroot image apt-get install -y minimal^ server^ standard^
@@ -53,6 +52,17 @@ __EOF
 
   # create ubuntu user
   sudo chroot image useradd -u 1000 -U -m ubuntu -s /bin/bash -G adm,dialout,cdrom,floppy,audio,dip,video,plugdev,netdev
+
+  # sudo permissions
+  local tmp_sudo="$(mktemp -t XXXXXX)"
+  cat > $tmp_sudo <<__EOF
+# ubuntu user is default user in cloud-images.
+# It needs passwordless sudo functionality.
+ubuntu ALL=(ALL) NOPASSWD:ALL
+__EOF
+
+  sudo install -o root -g root -m 0400 "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
+  rm -f "$tmp_sudo"
 
   # cloud init
   local tmp_cloud="$(mktemp -t XXXXXX)"
@@ -75,36 +85,21 @@ __EOF
   rm -f $tmp_cloud
 
   # run and verify cloud init
-  sudo chroot image /usr/bin/cloud-init start-local || true
+  sudo chroot image cloud-init start-local || true
+  sudo chroot image cloud-init-cfg all config
+  sudo chroot image cloud-init-cfg all final
   sudo chroot image id -a ubuntu
   sudo chroot image sudo id -a ubuntu
   sudo chroot image cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
   sudo rm -f $prefix/var/lib/cloud/seed/nocloud/meta-data
 
-  # sudoer permissions
-  local tmp_sudo="$(mktemp -t XXXXXX)"
-  cat > $tmp_sudo <<__EOF
-# ubuntu user is default user in cloud-images.
-# It needs passwordless sudo functionality.
-ubuntu ALL=(ALL) NOPASSWD:ALL
-__EOF
-
-  sudo install -o root -g root -m 0400 "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
-  rm -f "$tmp_sudo"
+  # sshd requirements
+  sudo install -d -m 0755 -o root -g root /var/run/sshd
 
   # cleanup
   sudo rm -rf /etc/udev/rules.d/70-persistent-net.rules /lib/udev/rules.d/75-persistent-net-generator.rules /dev/.udev /var/lib/dhcp3
   sudo mkdir -p /etc/udev/rules.d/70-persistent-net.rules
   sudo chroot image aptitude clean
-
-  sudo rm -f $prefix/etc/apt/apt.conf.d/01proxy
-
-  # sshd requirements
-  sudo install -d -m 0755 -o root -g root /var/run/sshd
-
-  # pretend upstart services always succeed
-  sudo dpkg-divert --local --rename --add /sbin/initctl
-  sudo ln -s /bin/true /sbin/initctl
 
   # docker image
   sudo tar cfp docker-${nm_distro}.tar -C image .
