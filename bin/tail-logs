@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
 
-sleep 5
+while true; do
+  for f in "$@"; do
+    if [[ ! -r "$f" ]]; then
+      echo "$f not found"
+      sleep 1
+      continue 2
+    fi
+  done
+  break
+done
+
 exec tail -f "$@"
