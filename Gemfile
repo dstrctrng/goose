@@ -18,4 +18,7 @@ gem "alox-jason"
 gem "mime-types", "< 2.0.0"
 gem "nokogiri", "< 1.6.0"
 
+# testing
+gem "serverspec"
+
 # vim: set ft=ruby:
