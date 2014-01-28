@@ -11,6 +11,9 @@ gem "vagrant-shell"
 gem "vagrant-aws"
 gem "unf"
 
+# testing
+gem "serverspec"
+
 # alox
 gem "alox"
 gem "alox-jason"
@@ -18,8 +21,5 @@ gem "alox-jason"
 # 1.8 compat
 gem "mime-types", "< 2.0.0"
 gem "nokogiri", "< 1.6.0"
-
-# testing
-gem "serverspec"
 
 # vim: set ft=ruby:
