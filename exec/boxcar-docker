@@ -82,6 +82,12 @@ __EOF
   ${sudo} cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
   sudo rm -f $prefix/var/lib/cloud/seed/nocloud/meta-data
 
+  # enable upstart in image
+  sudo rsync ia $prefix/sbin/init $prefix/sbin/init.orig
+  sudo rm -f $prefix/sbin/initctl
+  sudo mv $prefix/sbin/initctl.distrib $prefix/sbin/initctl
+  sudo rm -f $prefix/usr/sbin/policy-rc.d
+
   # cleanup
   sudo rm -rf /etc/udev/rules.d/70-persistent-net.rules /lib/udev/rules.d/75-persistent-net-generator.rules /dev/.udev /var/lib/dhcp3
   sudo mkdir -p /etc/udev/rules.d/70-persistent-net.rules
