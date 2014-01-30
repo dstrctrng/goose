@@ -24,6 +24,6 @@ Vagrant.configure("2") do |config|
   config.vm.provider :docker do |docker, override|
     docker.image = 'precise:clean'
     docker.script = docker.find_script("docker")
-    docker.run_args = %w(/usr/sbin/sshd -D)
+    docker.run_args = %w(/sbin/init.orig)
   end
 end
