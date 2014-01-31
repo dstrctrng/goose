@@ -9,10 +9,6 @@ function remote_build {
   container_build "$BUILD_IMAGE_PHASE"
 }
 
-function remote_install {
-  set -exfu; cd
-}
-
 function container_build {
   local nm_distro="$1"; shift
   local prefix=""
@@ -21,24 +17,6 @@ function container_build {
   # minimal install
   source /etc/lsb-release
   sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install -t "${DISTRIB_CODENAME}-backports" debootstrap
-
-  # workarounds
-
-  # update install with server distribution
-
-  # complete list of apt repos
-  local tmp_sources="$(mktemp -t XXXXXX)"
-  cat > $tmp_sources << __EOF
-deb http://security.ubuntu.com/ubuntu ${nm_distro}-security main restricted universe multiverse
-deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro} main restricted universe multiverse
-deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro}-backports main restricted universe multiverse
-deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro}-updates main restricted universe multiverse
-__EOF
-  sudo install -o root -g root -m 0644 $tmp_sources $prefix/etc/apt/sources.list
-  rm -f "$tmp_sources"
-  ${sudo} aptitude update
-
-  # create ubuntu user
 
   # sudo permissions
   local tmp_sudo="$(mktemp -t XXXXXX)"
