@@ -67,7 +67,7 @@ GEM
     unf_ext (0.0.6)
     vagrant-aws (0.4.0)
       fog (~> 1.15.0)
-    vagrant-shell (0.2.19)
+    vagrant-shell (0.2.20)
 
 PLATFORMS
   ruby
