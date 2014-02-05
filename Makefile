@@ -41,6 +41,7 @@ $(PKG_HOME)/bin/bundle: $(PKG_HOME)/bin/ruby $(PKG_HOME)/bin/gem $(PKG_HOME)/bin
 	$(PKG_HOME)/bin/gem install bundler -v '~> 1.3.5'
 
 $(PKG_HOME)/bin/ruby193:
+	$(PKGADD) libxml2
 	$(PKGADD) ruby193-base ruby193-readline
 
 $(PKG_HOME)/bin/gem193: $(PKG_HOME)/bin/ruby193
