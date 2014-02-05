@@ -30,7 +30,7 @@ $(PKG_HOME)/bin/bmake:
 	tar xvfz $(PKG_PATH)/../bootstrap.tgz -C /
 
 pkgsrc: $(PKG_HOME)/bin/bmake
-	$(PKGADD) getopt figlet coreutils
+	$(PKGADD) getopt figlet coreutils runit irssi
 
 cache: pkgsrc
 	$(PKGADD) squid openssh
