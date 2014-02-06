@@ -31,29 +31,7 @@ $(PKG_HOME)/bin/bmake:
 
 pkgsrc: $(PKG_HOME)/bin/bmake
 	$(PKGADD) getopt figlet coreutils runit irssi unzip bsdtar
+	$(PKGADD) libxml2 libyaml
 
 cache: pkgsrc
 	$(PKGADD) squid openssh
-
-ruby: $(PKG_HOME)/bin/bundle
-
-$(PKG_HOME)/bin/bundle: $(PKG_HOME)/bin/ruby $(PKG_HOME)/bin/gem $(PKG_HOME)/bin/irb
-	$(PKG_HOME)/bin/gem install bundler -v '~> 1.3.5'
-
-$(PKG_HOME)/bin/ruby193:
-	$(PKGADD) libxml2
-	$(PKGADD) ruby193-base ruby193-readline
-
-$(PKG_HOME)/bin/gem193: $(PKG_HOME)/bin/ruby193
-
-$(PKG_HOME)/bin/ruby: $(PKG_HOME)/bin/ruby193
-	ln -nfs $(shell basename $<) $@
-
-$(PKG_HOME)/bin/gem: $(PKG_HOME)/bin/gem193
-	ln -nfs $(shell basename $<) $@
-	$@ install rubygems-update -v '~> 2.1.11'
-	@env PATH="$(PKG_HOME)/bin:$(PATH)" update_rubygems
-
-$(PKG_HOME)/bin/irb: $(PKG_HOME)/bin/irb193
-	ln -nfs $(shell basename $<) $@
-
