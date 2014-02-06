@@ -7,10 +7,6 @@
 /build
 /vendor/projects/awsme_cli
 /config/aws.*
-/pkg
-/pkgsrc
-/pkgsrc-wip
-
 /config/authorized_keys
 /config/proxy.port
 /config/ssh_agent
