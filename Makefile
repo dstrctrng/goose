@@ -16,3 +16,4 @@ ready:
 	cd vendor/projects/awsme && $(MAKE)
 	cd vendor/projects/awsme && $(MAKE) cli
 	bundle check --path vendor/bundle 2>&1 >/dev/null || bundle --local --path vendor/bundle
+	ln -nfs $(VAULT) vault
