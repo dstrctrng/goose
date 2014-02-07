@@ -3,7 +3,6 @@
 shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
 
 export GOOSE="$shome"
-export VAULT="$shome/vault"
 export BOXCAR="$shome"
 export AWSME="$shome"
 export AWSME_CLI="$shome/vendor/projects/awsme_cli"
