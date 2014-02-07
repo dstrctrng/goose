@@ -1,0 +1,6 @@
+#!/bin/sh
+: ${GOLDEN_PATH="/opt/goose"}
+cd ${GOLDEN_PATH}/goose
+chmod g-w ${GOLDEN_PATH}/goose ${GOLDEN_PATH}/goose/config
+touch ${GOLDEN_PATH}/goose/config/authorized_keys
+exec chpst -e ${GOLDEN_PATH}/service/agent/env ${GOLDEN_PATH}/bin/shell vendor/projects/offline/bin/setup-ssh-agent ${GOLDEN_PATH}/goose/config/ssh_agent ${GOLDEN_PATH}/goose/config/authorized_keys

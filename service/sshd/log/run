@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+: ${GOLDEN_PATH="/opt/goose"}
+
+LOG=${GOLDEN_PATH}/log/sshd
+
+test -d "$LOG" || mkdir -p -m2750 "$LOG"
+exec chpst svlogd "$LOG"
