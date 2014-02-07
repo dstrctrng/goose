@@ -1,26 +1,31 @@
 #!/usr/bin/env bash
 
-shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+export GOOSE="${GOOSE:=$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)}"
+export VAULT="${VAULT:=$(unset CDPATH; cd -P -- "$GOLDEN_PATH/.." && pwd -P)/vault}"
+export PKG_HOME="${PKG_HOME:=$(unset CDPATH; cd -P -- "$GOLDEN_PATH/.." && pwd -P)/pkg}"
+export YARVM="${YARVM:=$(unset CDPATH; cd -P -- "$GOLDEN_PATH/.." && pwd -P)/yarvm}"
+export GOOSE="${GOOSE:=$(unset CDPATH; cd -P -- "$GOLDEN_PATH/.." && pwd -P)/goose}"
 
-export GOOSE="$shome"
-export BOXCAR="$shome"
-export AWSME="$shome"
-export AWSME_CLI="$shome/vendor/projects/awsme_cli"
+export BOXCAR="$GOOSE"
+export AWSME="$GOOSE"
+export AWSME_CLI="$GOOSE/vendor/projects/awsme_cli"
 
-export PORT_SSHD_FILE="$shome/config/sshd.port"
-export PORT_PROXY_FILE="$shome/config/proxy.port"
-export SSH_AGENT_FILE="$shome/config/ssh_agent"
+export PORT_SSHD_FILE="$GOOSE/config/sshd.port"
+export PORT_PROXY_FILE="$GOOSE/config/proxy.port"
+export SSH_AGENT_FILE="$GOOSE/config/ssh_agent"
 
-export VBOX_USER_HOME="$shome/.vagrant.d"
-export VAGRANT_HOME="$shome/.vagrant.d"
+export VBOX_USER_HOME="$GOOSE/.vagrant.d"
+export VAGRANT_HOME="$GOOSE/.vagrant.d"
 
 function require_ {
-  source "$shome/vendor/projects/boxcar/libexec/_boxcar"
-  source "$shome/vendor/projects/awsme/libexec/_awsme"
+  source "$GOOSE/vendor/projects/boxcar/libexec/_boxcar"
+  source "$GOOSE/vendor/projects/awsme/libexec/_awsme"
 }
 
 require_
 
-export PATH="$shome/bin:$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
+export PATH="$GOOSE/bin:$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
 
 unset BUNDLE_GEMFILE RUBYOPT
+
+source $YARVM/.rbenv/libexec/_rbenv

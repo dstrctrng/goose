@@ -6,14 +6,16 @@ PROVIDER := virtualbox
 
 export GOOSE BOXCAR AWSME AWSME_CLI
 
+RMAKE := unset BUNDLE_GEMFILE BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PATH && $(MAKE)
+
 all: ready
 
 ready: config/aws.yml
 	git submodule update --init --recursive
-	cd vendor/projects/boxcar && $(MAKE)
-	cd vendor/projects/offline && $(MAKE)
-	cd vendor/projects/awsme && $(MAKE)
-	cd vendor/projects/awsme && $(MAKE) cli
+	cd vendor/projects/boxcar && $(RMAKE)
+	cd vendor/projects/offline && $(RMAKE)
+	cd vendor/projects/awsme && $(RMAKE)
+	cd vendor/projects/awsme && $(RMAKE) cli
 	bundle check --path vendor/bundle 2>&1 >/dev/null || bundle --local --path vendor/bundle
 
 config/aws.yml:
