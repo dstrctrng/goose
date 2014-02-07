@@ -1,4 +1,4 @@
 #!/bin/sh
-: ${GOLDEN_PATH="/opt/goose"}
-cd ${GOLDEN_PATH}/goose
-exec chpst -e ${GOLDEN_PATH}/service/proxy/env ${GOLDEN_PATH}/bin/shell vendor/projects/offline/bin/setup-squid ${GOLDEN_PATH}/goose/config/proxy.port
+: ${GOOSE="/opt/goose"}
+cd ${GOOSE}/goose
+exec chpst -e ${GOOSE}/service/proxy/env ${GOOSE}/bin/shell vendor/projects/offline/bin/setup-squid ${GOOSE}/goose/config/proxy.port

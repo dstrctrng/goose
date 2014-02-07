@@ -1,4 +1,4 @@
 #!/bin/sh
-: ${GOLDEN_PATH="/opt/goose"}
-cd ${GOLDEN_PATH}/goose
-exec chpst -e ${GOLDEN_PATH}/service/sshd/env ${GOLDEN_PATH}/bin/shell vendor/projects/offline/bin/setup-sshd ${GOLDEN_PATH}/goose/config/sshd.port ${GOLDEN_PATH}/goose/config/authorized_keys
+: ${GOOSE="/opt/goose"}
+cd ${GOOSE}/goose
+exec chpst -e ${GOOSE}/service/sshd/env ${GOOSE}/bin/shell vendor/projects/offline/bin/setup-sshd ${GOOSE}/goose/config/sshd.port ${GOOSE}/goose/config/authorized_keys
