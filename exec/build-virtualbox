@@ -6,13 +6,13 @@ require _goose
 nm_release="precise"
 nm_provider="virtualbox"
 
-rm -rf $shome/output-${nm_provider}
+rm -rf $GOOSE/output-${nm_provider}
 rm -rf "$HOME/VirtualBox VMs/${nm_release}"
-packer build $shome/config/${nm_release}/${nm_provider}.json
-cd $shome/output-${nm_provider}
+env PACKER_CACHE_DIR=$VAULT/packer_cache packer build $GOOSE/config/${nm_release}/${nm_provider}.json
+cd $GOOSE/output-${nm_provider}
 (set +f; ln -nfs *.ovf box.ovf)
 echo '{"provider":"'"${nm_provider}"'"}' > metadata.json
-tar cvfz $shome/boxes/${nm_provider}.box.tmp .
-mv $shome/boxes/${nm_provider}.box.tmp $shome/boxes/${nm_provider}.box
+tar cvfz $GOOSE/boxes/${nm_provider}.box.tmp .
+mv $GOOSE/boxes/${nm_provider}.box.tmp $GOOSE/boxes/${nm_provider}.box
 vagrant box remove ${nm_release} ${nm_provider} 2>&- || true
-vagrant box add ${nm_release} $shome/boxes/${nm_provider}.box
+vagrant box add ${nm_release} $GOOSE/boxes/${nm_provider}.box

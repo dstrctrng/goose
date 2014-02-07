@@ -3,4 +3,4 @@
 source _jason
 require _goose
 
-exec "$shome/vendor/projects/boxcar/libexec/train" "$@"
+exec "$GOOSE/vendor/projects/boxcar/libexec/train" "$@"
