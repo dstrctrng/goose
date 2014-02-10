@@ -14,6 +14,8 @@ function remote_install {
 
   bin/shell vagrant box add precise goose/boxes/docker.box
   bin/shell vagrant box add precise boxes/aws.box
+  bin/shell vagrant box add precise boxes/static.box
+  bin/shell vagrant box add precise-clean boxes/static.box
   bin/shell vagrant box add static boxes/static.box
 }
 
