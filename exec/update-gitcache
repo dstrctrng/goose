@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+#/ NAME
+#/     update-gitcache - mirrors git repositories to local cache
+
+source _jason
+
+function main {
+  cd "$VAULT/git-cache"
+  for repo in $(set +f; ls -d */*.git); do
+    if [[ ! -d "$repo/refs" ]]; then
+      git clone --mirror "git@github.com:$repo" "$repo"
+    fi
+  done
+  if [[ "$#" = 0 ]]; then
+    runmany 4 1 'cd $1/.. && git fetch --all' $(set +f; ls -d $VAULT/git-cache/*/*.git/refs)
+  else
+    runmany 4 1 'cd $VAULT/git-cache/$1.git && git fetch --all' "$@"
+  fi
+}
+
+require sub "$BASH_SOURCE" "$@"
