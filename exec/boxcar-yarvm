@@ -29,7 +29,7 @@ function remote_install {
   cd yarvm
   make
   make binary
-  make 1.9.3 2.0.0 jruby
+  make 1.9.3 2.0.0
 
   cd test
   ./run
