@@ -6,16 +6,12 @@
 function remote_install {
   set -exfu; cd
 
-  rm -rf pkgsrc pkg
-  env | grep GIT
-  which git
-  ssh-add -list
-  git clone git@github.com:destructuring/pkgsrc pkgsrc
 
   export VAULT='/opt/vault'
+  export PKG_HOME="$(pwd)/pkg"
 
+  rm -rf pkgsrc pkg
   cd pkgsrc
-  export PKG_HOME="$(cd .. && pwd)/pkg"
   make -f Makefile.goose bmake
   make -f Makefile.goose "$PKG_HOME/bin/bmake"
   make -f Makefile.goose packages
