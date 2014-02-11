@@ -2,7 +2,6 @@ GOOSE := $(PWD)
 BOXCAR := $(GOOSE)
 AWSME := $(GOOSE)
 AWSME_CLI := $(GOOSE)/vendor/projects/awsme_cli
-PROVIDER := virtualbox
 
 export GOOSE BOXCAR AWSME AWSME_CLI
 
