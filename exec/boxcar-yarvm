@@ -15,7 +15,7 @@ function remote_install {
     sudo aptitude update
     sudo aptitude install -y build-essential libxml2-dev libxslt-dev zlib1g-dev libssl-dev libreadline-dev libyaml-dev
     sudo aptitude install -y gawk libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison pkg-config libffi-dev
-    sudo aptitude install -y maven2
+    sudo aptitude install -y maven
   fi
 
   rm -rf yarvm
