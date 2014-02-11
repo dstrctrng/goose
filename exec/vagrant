@@ -3,12 +3,13 @@
 source _jason
 require _goose
 
+unset BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PATH
+export BUNDLE_GEMFILE="$GOOSE/Gemfile"
+
 pth_vagrant="$(bundle exec which vagrant 2>&- || true)"
 if [[ "$pth_vagrant" = "$GOOSE/bin/vagrant" ]]; then
   printf 'ERROR: vagrant not found, run make' 1>&2
   exit 1
 fi
 
-unset BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PATH
-export BUNDLE_GEMFILE="$GOOSE/Gemfile"
 exec bundle exec vagrant "$@"
