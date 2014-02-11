@@ -6,24 +6,28 @@
 function remote_install {
   set -exfu; cd
 
-  export VAULT='/opt/vault'
+  if [[ "$(uname -s)" = "Linux" ]]; then
+    sudo aptitude update
+    sudo aptitude install -y build-essential
+    sudo aptitude install -y libxml2-dev libxslt-dev zlib1g-dev libssl-dev libreadline-dev libyaml-dev
+    sudo aptitude install -y gawk libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison pkg-config libffi-dev
+    sudo aptitude install -y maven openjdk-7-jre-headless > /dev/null
+  fi
+
+  if [[ "$BUILD_IMAGE_PHASE" != "install" ]]; then
+    cd "$BUILD_IMAGE_PHASE"
+  fi
+
+  export VAULT="$(pwd)/vault"
   export PKG_HOME="$(pwd)/pkg"
 
   PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
-
-  if [[ "$(uname -s)" = "Linux" ]]; then
-    sudo aptitude update
-    sudo aptitude install -y build-essential libxml2-dev libxslt-dev zlib1g-dev libssl-dev libreadline-dev libyaml-dev
-    sudo aptitude install -y gawk libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison pkg-config libffi-dev
-    sudo aptitude install -y maven
-  fi
 
   rm -rf yarvm
   git clone https://github.com/destructuring/yarvm yarvm
 
   cd yarvm
   make
-
   make binary
   make 1.9.3 2.0.0 jruby
 
@@ -51,8 +55,13 @@ bootstrap="$BASH_SOURCE"
 function main {
   local pth_ssh_config="$1"
 
-  ssh -F $pth_ssh_config default mkdir -p vault
-  rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:vault/
+  local install=""
+  if [[ "$BUILD_IMAGE_PHASE" != "install" ]]; then
+    intall="$BUILD_IMAGE_PHASE/"
+  fi
+
+  ssh -F $pth_ssh_config default mkdir -p ${install}vault
+  rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:${install}vault/
   standard_hook "$bootstrap" "$@"
 }
 

@@ -7,14 +7,22 @@ function remote_install {
   set -exfu; cd
 
   if [[ "$(uname -s)" = "Linux" ]]; then
+    sudo aptitude update
     sudo aptitude install -y build-essential
+  fi
+
+  if [[ "$BUILD_IMAGE_PHASE" != "install" ]]; then
+    cd "$BUILD_IMAGE_PHASE"
   fi
 
   export VAULT="$(pwd)/vault"
   export PKG_HOME="$(pwd)/pkg"
 
+  PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
+
   rm -rf pkgsrc pkg
   git clone git@github.com:destructuring/pkgsrc pkgsrc
+
   cd pkgsrc
   make -f Makefile.goose SH=/bin/bash bmake
   make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
@@ -42,8 +50,13 @@ bootstrap="$BASH_SOURCE"
 function main {
   local pth_ssh_config="$1"
 
-  ssh -F $pth_ssh_config default mkdir -p vault
-  rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:vault/
+  local install=""
+  if [[ "$BUILD_IMAGE_PHASE" != "install" ]]; then
+    intall="$BUILD_IMAGE_PHASE/"
+  fi
+
+  ssh -F $pth_ssh_config default mkdir -p ${install}vault
+  rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:${install}vault/
   standard_hook "$bootstrap" "$@"
 }
 
