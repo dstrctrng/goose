@@ -4,19 +4,21 @@
 #/     boxcar-goose - set up the golden goose for image building
 
 function remote_install {
-  set -exfu; cd
+  set -exfu
 
-  sudo install -o ubuntu -g ubuntu -d -m 0755 /opt/goose
-  git clone git@github.com:destructuring/goose /opt/goose
-  cd /opt/goose
+  mkdir -p goose || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 goose
+  rm -rf goose || true
+  git clone https://github.com/destructuring/goose goose
+  cd goose
   cp config/aws.yml.example config/aws.yml
   make
 
-  bin/shell vagrant box add precise goose/boxes/docker.box
+  bin/shell vagrant box add static boxes/static.box
+
+  bin/shell vagrant box add precise boxes/docker.box
   bin/shell vagrant box add precise boxes/aws.box
   bin/shell vagrant box add precise boxes/static.box
   bin/shell vagrant box add precise-clean boxes/static.box
-  bin/shell vagrant box add static boxes/static.box
 }
 
 if [[ "$#" = 0 ]]; then

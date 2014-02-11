@@ -4,7 +4,7 @@
 #/     boxcar-pkgsrc - builds and installs pkgsrc for boxcar
 
 function remote_install {
-  set -exfu; cd
+  set -exfu
 
   if [[ "$(uname -s)" = "Linux" ]]; then
     sudo aptitude update
@@ -20,7 +20,8 @@ function remote_install {
 
   PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
 
-  rm -rf pkgsrc pkg
+  mkdir -p pkgsrc pkg || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 pkgsrc pkg
+  rm -rf pkgsrc pkg || true
   git clone git@github.com:destructuring/pkgsrc pkgsrc
 
   cd pkgsrc
