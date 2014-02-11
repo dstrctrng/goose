@@ -60,8 +60,6 @@ function main {
     intall="$BUILD_IMAGE_PHASE/"
   fi
 
-  ssh -F $pth_ssh_config default mkdir -p ${install}vault
-  rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:${install}vault/
   standard_hook "$bootstrap" "$@"
 }
 
