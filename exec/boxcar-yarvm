@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+#/ NAME
+#/     boxcar-yarvm - builds and installs yarvm
+
+function remote_install {
+  set -exfu; cd
+
+  rm -rf yarvm
+  git clone git@github.com:destructuring/yarvm yarvm
+
+  export VAULT='/opt/vault'
+  export PKG_HOME="$(cd .. && pwd)/pkg"
+
+  PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
+
+  cd yarvm
+  make binary
+  make 1.9.3 2.0.0
+  cd test
+  ./run 1.9.3 2.0.0
+}
+
+if [[ "$#" = 0 ]]; then
+  remote_install
+  exit $?
+fi
+
+
+# figure out the project root under which bin, lib live
+shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+
+# load a jason bourne library
+source _jason
+require _boxcar
+require _boxcar_opt
+
+bootstrap="$BASH_SOURCE"
+
+# entry point
+function main {
+  local pth_ssh_config="$1"
+
+  standard_hook "$bootstrap" "$@"
+}
+
+require sub "$BASH_SOURCE" "$@"

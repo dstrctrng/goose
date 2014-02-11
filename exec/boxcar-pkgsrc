@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+#/ NAME
+#/     boxcar-pkgsrc - builds and installs pkgsrc for boxcar
+
+function remote_install {
+  set -exfu; cd
+
+  rm -rf pkgsrc pkg
+  env | grep GIT
+  which git
+  ssh-add -list
+  git clone git@github.com:destructuring/pkgsrc pkgsrc
+
+  export VAULT='/opt/vault'
+
+  cd pkgsrc
+  export PKG_HOME="$(cd .. && pwd)/pkg"
+  make -f Makefile.goose bmake
+  make -f Makefile.goose "$PKG_HOME/bin/bmake"
+  make -f Makefile.goose packages
+  make -f Makefile.goose cache
+}
+
+if [[ "$#" = 0 ]]; then
+  remote_install
+  exit $?
+fi
+
+
+# figure out the project root under which bin, lib live
+shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+
+# load a jason bourne library
+source _jason
+require _boxcar
+require _boxcar_opt
+
+bootstrap="$BASH_SOURCE"
+
+# entry point
+function main {
+  local pth_ssh_config="$1"
+
+  standard_hook "$bootstrap" "$@"
+}
+
+require sub "$BASH_SOURCE" "$@"
