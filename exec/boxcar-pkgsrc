@@ -59,8 +59,8 @@ function main {
   ssh -F $pth_ssh_config default mkdir -p ${install}vault
   rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:${install}vault/
   standard_hook "$bootstrap" "$@"
-  rsync -ia -e "ssh -F $pth_ssh_config" default:${install}vault/distfiles $VAULT/distfiles default:${install}vault/
-  rsync -ia -e "ssh -F $pth_ssh_config" default:${install}vault/packages $VAULT/distfiles default:${install}vault/
+  rsync -ia -e "ssh -F $pth_ssh_config" default:${install}vault/distfiles $VAULT/
+  rsync -ia -e "ssh -F $pth_ssh_config" default:${install}vault/packages $VAULT/
 }
 
 require sub "$BASH_SOURCE" "$@"
