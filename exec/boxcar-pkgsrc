@@ -7,8 +7,8 @@ function remote_install {
   set -exfu
 
   if [[ "$(uname -s)" = "Linux" ]]; then
-    sudo aptitude update
-    sudo aptitude install -y build-essential
+    sudo -E aptitude update
+    sudo -E aptitude install -y build-essential
   fi
 
   if [[ "$BUILD_IMAGE_PHASE" != "install" ]]; then

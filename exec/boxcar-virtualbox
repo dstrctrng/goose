@@ -16,7 +16,7 @@ function container_build {
 
   # minimal install
   source /etc/lsb-release
-  sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install -t "${DISTRIB_CODENAME}-backports" debootstrap
+  sudo -E env DEBIAN_FRONTEND=noninteractive aptitude -y install -t "${DISTRIB_CODENAME}-backports" debootstrap
 
   # sudo permissions
   local tmp_sudo="$(mktemp -t XXXXXX)"

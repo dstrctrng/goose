@@ -7,11 +7,11 @@ function remote_install {
   set -exfu
 
   if [[ "$(uname -s)" = "Linux" ]]; then
-    sudo aptitude update
-    sudo aptitude install -y build-essential
-    sudo aptitude install -y libxml2-dev libxslt-dev zlib1g-dev libssl-dev libreadline-dev libyaml-dev
-    sudo aptitude install -y gawk libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison pkg-config libffi-dev
-    sudo aptitude install -y maven openjdk-7-jre-headless > /dev/null
+    sudo -E aptitude update
+    sudo -E aptitude install -y build-essential
+    sudo -E aptitude install -y libxml2-dev libxslt-dev zlib1g-dev libssl-dev libreadline-dev libyaml-dev
+    sudo -E aptitude install -y gawk libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison pkg-config libffi-dev
+    sudo -E aptitude install -y maven openjdk-7-jre-headless > /dev/null
   fi
 
   if [[ "$BUILD_IMAGE_PHASE" != "install" ]]; then

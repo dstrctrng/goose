@@ -23,7 +23,7 @@ function container_build {
 
   # minimal install
   source /etc/lsb-release
-  sudo env DEBIAN_FRONTEND=noninteractive aptitude -y install -t "${DISTRIB_CODENAME}-backports" debootstrap
+  sudo -E env DEBIAN_FRONTEND=noninteractive aptitude -y install -t "${DISTRIB_CODENAME}-backports" debootstrap
   rm -rf image; mkdir image
   sudo -E debootstrap --arch amd64 --include=language-pack-en,aptitude,openssh-server,cloud-init \
             ${nm_distro} image http://archive.ubuntu.com/ubuntu/
@@ -120,7 +120,7 @@ Pim0BXdjsHVftivqZqfWeVFKMorchQ==
 -----END PGP PUBLIC KEY BLOCK-----
 __EOF
   echo "deb http://get.docker.io/ubuntu docker main" | sudo tee /etc/apt/sources.list.d/docker.list
-  sudo aptitude update
+  sudo -E aptitude update
 
   sudo env DEBIAN_FRONTEND=noninteractive apt-get -y install --install-recommends lxc/precise-backports
   sudo env DEBIAN_FRONTEND=noninteractive apt-get -y install --install-recommends lxc-docker
