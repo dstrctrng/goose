@@ -14,10 +14,6 @@ function remote_install {
     sudo -E aptitude install -y maven openjdk-7-jre-headless > /dev/null
   fi
 
-  if [[ "$BUILD_IMAGE_PHASE" != "install" ]]; then
-    cd "$BUILD_IMAGE_PHASE"
-  fi
-
   export VAULT="$(pwd)/vault"
   export PKG_HOME="$(pwd)/pkg"
 
@@ -55,11 +51,6 @@ bootstrap="$BASH_SOURCE"
 # entry point
 function main {
   local pth_ssh_config="$1"
-
-  local install=""
-  if [[ "$BUILD_IMAGE_PHASE" != "install" ]]; then
-    intall="$BUILD_IMAGE_PHASE/"
-  fi
 
   standard_hook "$bootstrap" "$@"
 }

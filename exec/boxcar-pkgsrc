@@ -11,18 +11,14 @@ function remote_install {
     sudo -E aptitude install -y build-essential
   fi
 
-  if [[ "$BUILD_IMAGE_PHASE" != "install" ]]; then
-    cd "$BUILD_IMAGE_PHASE"
-  fi
-
   export VAULT="$(pwd)/vault"
   export PKG_HOME="$(pwd)/pkg"
 
   PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
 
-  mkdir -p pkgsrc pkg vault || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 pkgsrc pkg vault
+  mkdir -p pkgsrc pkg || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 pkgsrc pkg
   rm -rf pkgsrc pkg || true
-  git clone git@github.com:destructuring/pkgsrc pkgsrc
+  git clone -b pkgsrc_2013Q4 git@github.com:destructuring/pkgsrc pkgsrc
 
   cd pkgsrc
   make -f Makefile.goose SH=/bin/bash bmake
@@ -51,16 +47,17 @@ bootstrap="$BASH_SOURCE"
 function main {
   local pth_ssh_config="$1"
 
-  local install=""
-  if [[ "$BUILD_IMAGE_PHASE" != "install" ]]; then
-    intall="$BUILD_IMAGE_PHASE/"
+  if ! ssh -F $pth_ssh_config default mkdir -p ${OVERRIDE_anchor}/vault 2>&-; then
+    local un="$(ssh -F $pth_ssh_config default id -un)"
+    local gn="$(ssh -F $pth_ssh_config default id -gn)"
+    ssh -F $pth_ssh_config default sudo install -d -o $un -g $gn -m 755 ${OVERRIDE_anchor}/vault
   fi
 
-  ssh -F $pth_ssh_config default mkdir -p ${install}vault
-  rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:${install}vault/
+  ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
+  rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:${OVERRIDE_anchor}/vault/
   standard_hook "$bootstrap" "$@"
-  rsync -ia -e "ssh -F $pth_ssh_config" default:${install}vault/distfiles $VAULT/
-  rsync -ia -e "ssh -F $pth_ssh_config" default:${install}vault/packages $VAULT/
+  rsync -ia -e "ssh -F $pth_ssh_config" default:${OVERRIDE_anchor}/vault/distfiles $VAULT/
+  rsync -ia -e "ssh -F $pth_ssh_config" default:${OVERRIDE_anchor}/vault/packages $VAULT/
 }
 
 require sub "$BASH_SOURCE" "$@"
