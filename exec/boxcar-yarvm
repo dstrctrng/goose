@@ -52,7 +52,11 @@ bootstrap="$BASH_SOURCE"
 function main {
   local pth_ssh_config="$1"
 
+  ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
+  ssh -F $pth_ssh_config default mkdir -p ${OVERRIDE_anchor}/vault/packages
+  rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/packages/*_yarvm default:${OVERRIDE_anchor}/vault/packages/
   standard_hook "$bootstrap" "$@"
+  rsync -ia -e "ssh -F $pth_ssh_config" default:${OVERRIDE_anchor}/vault/packages $VAULT/
 }
 
 require sub "$BASH_SOURCE" "$@"
