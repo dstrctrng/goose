@@ -28,4 +28,4 @@ export PATH="$GOOSE/bin:$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
 
 unset BUNDLE_GEMFILE RUBYOPT
 
-source $YARVM/.rbenv/libexec/_rbenv
+source $YARVM/libexec/_yarvm
