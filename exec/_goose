@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 export GOOSE="${GOOSE:=$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)}"
-export VAULT="${VAULT:=$(unset CDPATH; cd -P -- "$GOLDEN_PATH/.." && pwd -P)/vault}"
-export PKG_HOME="${PKG_HOME:=$(unset CDPATH; cd -P -- "$GOLDEN_PATH/.." && pwd -P)/pkg}"
-export YARVM="${YARVM:=$(unset CDPATH; cd -P -- "$GOLDEN_PATH/.." && pwd -P)/yarvm}"
-export GOOSE="${GOOSE:=$(unset CDPATH; cd -P -- "$GOLDEN_PATH/.." && pwd -P)/goose}"
+export VAULT="${VAULT:=$(unset CDPATH; cd -P -- "$GOOSE/.." && pwd -P)/vault}"
+export PKG_HOME="${PKG_HOME:=$(unset CDPATH; cd -P -- "$GOOSE/.." && pwd -P)/pkg}"
+export YARVM="${YARVM:=$(unset CDPATH; cd -P -- "$GOOSE/.." && pwd -P)/yarvm}"
+export GOOSE="${GOOSE:=$(unset CDPATH; cd -P -- "$GOOSE/.." && pwd -P)/goose}"
 
 export BOXCAR="$GOOSE"
 export AWSME="$GOOSE"
