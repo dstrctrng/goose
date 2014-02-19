@@ -54,6 +54,7 @@ function remote_install {
   git clone https://github.com/destructuring/yarvm yarvm
 
   cd yarvm
+  make
   make 1.9.3 2.0.0
 
   cd test
