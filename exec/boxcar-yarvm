@@ -3,7 +3,7 @@
 #/ NAME
 #/     boxcar-yarvm - builds and installs yarvm
 
-function remote_install {
+function remote_build {
   set -exfu
 
   if [[ "$(uname -s)" = "Linux" ]]; then
@@ -11,7 +11,8 @@ function remote_install {
     sudo -E aptitude install -y build-essential
     sudo -E aptitude install -y libxml2-dev libxslt-dev zlib1g-dev libssl-dev libreadline-dev libyaml-dev
     sudo -E aptitude install -y gawk libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison pkg-config libffi-dev
-    sudo -E aptitude install -y maven openjdk-7-jre-headless > /dev/null
+    sudo -E aptitude install -y openjdk-7-jre-headless > /dev/null
+    sudo -E aptitude install -y maven > /dev/null
   fi
 
   export VAULT="$(pwd)/vault"
@@ -32,11 +33,48 @@ function remote_install {
   ./run
 }
 
-if [[ "$#" = 0 ]]; then
-  remote_install
-  exit $?
-fi
+function remote_install {
+  set -exfu
 
+  if [[ "$(uname -s)" = "Linux" ]]; then
+    sudo -E aptitude update
+    sudo -E aptitude install -y build-essential
+    sudo -E aptitude install -y libxml2-dev libxslt-dev zlib1g-dev libssl-dev libreadline-dev libyaml-dev
+    sudo -E aptitude install -y gawk libsqlite3-dev sqlite3 autoconf libgdbm-dev libncurses5-dev automake libtool bison pkg-config libffi-dev
+    sudo -E aptitude install -y openjdk-7-jre-headless > /dev/null
+  fi
+
+  export VAULT="$(pwd)/vault"
+  export PKG_HOME="$(pwd)/pkg"
+
+  PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
+
+  mkdir -p yarvm || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 yarvm
+  rm -rf yarvm || true
+  git clone https://github.com/destructuring/yarvm yarvm
+
+  cd yarvm
+  make 1.9.3 2.0.0
+
+  cd test
+  ./run
+}
+
+if [[ "$#" = 0 ]]; then
+  case "${BUILD_IMAGE_PHASE:-}" in 
+    build)            
+      remote_build    
+      exit $?         
+      ;; 
+    install)        
+      remote_install
+      exit $?         
+      ;;
+    *)
+      echo "ERROR: unknown build phase: $BUILD_IMAGE_PHASE" 1>&2
+      exit 1
+  esac
+fi    
 
 # figure out the project root under which bin, lib live
 shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
@@ -54,9 +92,20 @@ function main {
 
   ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
   ssh -F $pth_ssh_config default mkdir -p ${OVERRIDE_anchor}/vault/packages
-  (set +f; rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/packages/*_yarvm default:${OVERRIDE_anchor}/vault/packages/)
+
+  case "${BUILD_IMAGE_PHASE:-}" in 
+    install)        
+      (set +f; rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/packages/*_yarvm default:${OVERRIDE_anchor}/vault/packages/)
+      ;;
+  esac
+
   standard_hook "$bootstrap" "$@"
-  rsync -ia -e "ssh -F $pth_ssh_config" default:${OVERRIDE_anchor}/vault/packages $VAULT/
+
+  case "${BUILD_IMAGE_PHASE:-}" in 
+    build)            
+      rsync -ia -e "ssh -F $pth_ssh_config" default:${OVERRIDE_anchor}/vault/packages $VAULT/
+      ;; 
+  esac
 }
 
 require sub "$BASH_SOURCE" "$@"
