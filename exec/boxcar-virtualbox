@@ -6,6 +6,10 @@
 function remote_build {
   set -exfu; cd
 
+  BUILD_IMAGE_PHASE=precise
+  exec 2>&1
+  echo ubuntu | sudo -S true
+
   container_build "$BUILD_IMAGE_PHASE"
 }
 
@@ -63,17 +67,33 @@ __EOF
   ${sudo} aptitude clean
 }
 
+if [[ "$#" = 0 ]]; then
+  remote_build
+  exit $?
+fi
+
+# figure out the project root under which bin, lib live
+shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+
+# load a jason bourne library
+source _jason
+require _boxcar
+require _boxcar_opt
+
+bootstrap="$BASH_SOURCE"
+
 # entry point
 function main {
-  BUILD_IMAGE_PHASE=precise
-  exec 2>&1
-  echo ubuntu | sudo -S true
+  local pth_ssh_config="$1"
 
   case "${BUILD_IMAGE_PHASE:-}" in
+    install)
+      true
+      ;;
     *)
-      remote_build "$@"
+      standard_hook "$bootstrap" "$@"
       ;;
   esac
 }
 
-main "$@"
+require sub "$BASH_SOURCE" "$@"
