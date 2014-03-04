@@ -119,6 +119,9 @@ Pim0BXdjsHVftivqZqfWeVFKMorchQ==
 -----END PGP PUBLIC KEY BLOCK-----
 __EOF
   echo "deb http://get.docker.io/ubuntu docker main" | sudo tee /etc/apt/sources.list.d/docker.list
+
+  echo "deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro}-backports main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ubuntu_${nm_distro}_backports.list
+
   sudo -E aptitude update
 
   sudo env DEBIAN_FRONTEND=noninteractive apt-get -y install --install-recommends lxc/precise-backports
