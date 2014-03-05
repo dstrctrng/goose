@@ -4,7 +4,7 @@
 #/     boxcar-virtualbox - Packer virtualbox provisioning script
 
 function remote_build {
-  set -exfu; cd
+  set -exfu
 
   BUILD_IMAGE_PHASE=precise
   exec 2>&1

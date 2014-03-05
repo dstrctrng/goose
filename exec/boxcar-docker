@@ -4,16 +4,16 @@
 #/     boxcar-docker - debootstrap provisioning script
 
 function remote_build {
-  set -exfu; cd
+  set -exfu
 
-  docker_install
+  docker_install "$BUILD_IMAGE_PHASE"
   container_build "$BUILD_IMAGE_PHASE"
 }
 
 function remote_install {
-  set -exfu; cd
+  set -exfu
 
-  docker_install
+  docker_install "$BUILD_IMAGE_PHASE"
 }
 
 function container_build {
@@ -97,6 +97,10 @@ __EOF
 }
 
 function docker_install {
+  local nm_distro="$1"; shift
+
+  nm_distro='precise' # TODO somehow get OVERRIDE_release into remote env
+
   sudo apt-key add - <<__EOF
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.11 (GNU/Linux)
@@ -164,7 +168,7 @@ function main {
       ;;
     *)
       standard_hook "$bootstrap" "$@"
-      rsync -ia -e "ssh -F '$pth_ssh_config'" default:docker-${BUILD_IMAGE_PHASE}.tar $FLAGS_cachedir/
+      rsync -ia -e "ssh -F '$pth_ssh_config'" default:${OVERRIDE_anchor}/docker-${BUILD_IMAGE_PHASE}.tar $FLAGS_cachedir/
       ;;
   esac
 }
