@@ -14,7 +14,7 @@ ready: config/aws.yml
 	cd vendor/projects/boxcar && $(RMAKE)
 	cd vendor/projects/offline && $(RMAKE)
 	cd vendor/projects/awsme && $(RMAKE)
-	cd vendor/projects/awsme && $(RMAKE) cli
+	cd vendor/projects/awsme && $(RMAKE) PYTHON=$(PKG_HOME)/bin/python2.7 cli
 	bundle check --path vendor/bundle 2>&1 >/dev/null || bundle --local --path vendor/bundle
 
 config/aws.yml:
