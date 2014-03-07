@@ -160,15 +160,18 @@ bootstrap="$BASH_SOURCE"
 function main {
   local pth_ssh_config="$1"
 
+  ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
+  ssh -F $pth_ssh_config default mkdir -p ${OVERRIDE_anchor}/vault/images
+
   case "${BUILD_IMAGE_PHASE:-}" in
     install)
       standard_hook "$bootstrap" "$@"
-      cat $FLAGS_cachedir/docker-${OVERRIDE_release}.tar | ssh -F $pth_ssh_config default docker import - "${OVERRIDE_release}"
+      cat ${VAULT}/images/docker-${OVERRIDE_release}.tar | ssh -F $pth_ssh_config default docker import - "${OVERRIDE_release}"
       ssh -F $pth_ssh_config default docker run "${OVERRIDE_release}" true
       ;;
     *)
       standard_hook "$bootstrap" "$@"
-      rsync -ia -e "ssh -F '$pth_ssh_config'" default:${OVERRIDE_anchor}/docker-${BUILD_IMAGE_PHASE}.tar $FLAGS_cachedir/
+      rsync -ia -e "ssh -F '$pth_ssh_config'" default:${OVERRIDE_anchor}/docker-${BUILD_IMAGE_PHASE}.tar ${VAULT}/images/
       ;;
   esac
 }

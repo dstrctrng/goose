@@ -63,14 +63,14 @@ function remote_install {
 
 if [[ "$#" = 0 ]]; then
   case "${BUILD_IMAGE_PHASE:-}" in 
-    build)            
-      remote_build    
-      exit $?         
-      ;; 
     install)        
       remote_install
       exit $?         
       ;;
+    build)            
+      remote_build    
+      exit $?         
+      ;; 
     *)
       echo "ERROR: unknown build phase: $BUILD_IMAGE_PHASE" 1>&2
       exit 1
@@ -97,13 +97,10 @@ function main {
   case "${BUILD_IMAGE_PHASE:-}" in 
     install)        
       (set +f; rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/packages/*_yarvm default:${OVERRIDE_anchor}/vault/packages/)
+      standard_hook "$bootstrap" "$@"
       ;;
-  esac
-
-  standard_hook "$bootstrap" "$@"
-
-  case "${BUILD_IMAGE_PHASE:-}" in 
-    build)            
+    build)
+      standard_hook "$bootstrap" "$@"
       rsync -ia -e "ssh -F $pth_ssh_config" default:${OVERRIDE_anchor}/vault/packages $VAULT/
       ;; 
   esac
