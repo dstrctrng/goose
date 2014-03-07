@@ -18,7 +18,7 @@ function remote_build {
 
   mkdir -p pkgsrc pkg || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 pkgsrc pkg
   rm -rf pkgsrc pkg || true
-  git clone -b pkgsrc_2013Q4 git@github.com:destructuring/pkgsrc pkgsrc
+  git clone git@github.com:destructuring/pkgsrc pkgsrc
 
   cd pkgsrc
   make -f Makefile.goose SH=/bin/bash bmake
@@ -36,7 +36,7 @@ function remote_install {
 
   mkdir -p pkgsrc pkg || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 pkgsrc pkg
   rm -rf pkgsrc pkg || true
-  git clone -b pkgsrc_2013Q4 git@github.com:destructuring/pkgsrc pkgsrc
+  git clone git@github.com:destructuring/pkgsrc pkgsrc
 
   pushd pkgsrc
   make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
