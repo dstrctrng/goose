@@ -29,3 +29,6 @@ export PATH="$GOOSE/bin:$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
 unset BUNDLE_GEMFILE RUBYOPT
 
 source $YARVM/libexec/_yarvm
+
+export DOCKER_OPT=
+export DOCKER_CMD=/sbin/init.orig
