@@ -11,3 +11,4 @@
 /config/proxy.port
 /config/ssh_agent
 /config/sshd.port
+/bin/jq
