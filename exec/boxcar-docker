@@ -167,7 +167,7 @@ function main {
     install)
       standard_hook "$bootstrap" "$@"
       cat ${VAULT}/images/docker-${OVERRIDE_release}.tar | ssh -F $pth_ssh_config default docker import - "${OVERRIDE_release}"
-      ssh -F $pth_ssh_config default docker run "${OVERRIDE_release}" true
+      #ssh -F $pth_ssh_config default docker run "${OVERRIDE_release}" true
       ;;
     *)
       standard_hook "$bootstrap" "$@"
