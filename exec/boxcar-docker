@@ -131,6 +131,9 @@ __EOF
   sudo env DEBIAN_FRONTEND=noninteractive apt-get -y install --install-recommends lxc/precise-backports
   sudo env DEBIAN_FRONTEND=noninteractive apt-get -y install --install-recommends lxc-docker
   sudo usermod -a -G docker ubuntu
+
+  echo 'DOCKER_OPTS="-s=devicemapper"' | sudo tee /etc/default/docker
+  sudo restart docker
 }
 
 if [[ "$#" = 0 ]]; then
