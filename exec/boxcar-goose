@@ -6,6 +6,13 @@
 function remote_install {
   set -exfu
 
+  case "$(uname -s)" in
+    Linux)
+      sudo -E aptitude update
+      sudo -E aptitude install -y flex
+      ;;
+  esac
+
   mkdir -p goose || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 goose
   rm -rf goose || true
   git clone https://github.com/destructuring/goose goose
