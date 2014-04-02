@@ -61,7 +61,7 @@ if [[ "$#" = 0 ]]; then
       remote_install
       exit $?
       ;;
-    build)
+    *)
       remote_build
       exit $?
       ;;
