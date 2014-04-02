@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+#/ NAME
+#/     boxcar-vendor - update pkgsrc, yarvm, and goose
+
+function remote_install {
+  set -exfu
+
+  export VAULT="$(pwd)/vault"
+  export PKG_HOME="$(pwd)/pkg"
+
+  PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
+
+  # update everything
+  sudo -E aptitude update
+  sudo -E aptitude -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew dist-upgrade
+  sudo -E aptitude -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew safe-upgrade
+
+  pushd pkgsrc
+  # TODO install updated packages
+  popd
+
+  pushd yarvm
+  git pull
+  make
+  source libexec/_yarvm
+  popd
+
+  pushd goose
+  git pull
+  make
+  popd
+}
+
+if [[ "$#" = 0 ]]; then
+  remote_install
+  exit $?
+fi
+
+
+# figure out the project root under which bin, lib live
+shome="$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+
+# load a jason bourne library
+source _jason
+require _boxcar
+require _boxcar_opt
+
+bootstrap="$BASH_SOURCE"
+
+# entry point
+function main {
+  local pth_ssh_config="$1"
+
+  standard_hook "$bootstrap" "$@"
+}
+
+require sub "$BASH_SOURCE" "$@"

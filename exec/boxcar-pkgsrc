@@ -43,7 +43,7 @@ function remote_install {
   make -f Makefile.goose SH=/bin/bash cache
   popd
 
-  rm -rf pkgsrc vault || true
+  rm -rf vault || true
   
 }
 
