@@ -21,12 +21,16 @@ function remote_build {
   git clone -b pkgsrc_2013Q4 git@github.com:destructuring/pkgsrc pkgsrc
 
   cd pkgsrc
-  make -f Makefile.goose SH=/bin/bash bmake
-  make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
 
   case "$BUILD_IMAGE_PHASE" in
     build)
+      make -f Makefile.goose SH=/bin/bash bmake
+      make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
       make -f Makefile.goose SH=/bin/bash packages
+      ;;
+    bmake)
+      make -f Makefile.goose SH=/bin/bash bmake
+      make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
       ;;
     *)
       make -f Makefile.goose SH=/bin/bash PACKAGE="$BUILD_IMAGE_PHASE" package
