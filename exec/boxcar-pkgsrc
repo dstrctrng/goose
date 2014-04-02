@@ -23,7 +23,15 @@ function remote_build {
   cd pkgsrc
   make -f Makefile.goose SH=/bin/bash bmake
   make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
-  make -f Makefile.goose SH=/bin/bash packages
+
+  case "$BUILD_IMAGE_PHASE" in
+    build)
+      make -f Makefile.goose SH=/bin/bash packages
+      ;;
+    *)
+      make -f Makefile.goose SH=/bin/bash PACKAGE="$BUILD_IMAGE_PHASE" package
+      ;;
+  esac
 }
 
 function remote_install {
@@ -49,17 +57,14 @@ function remote_install {
 
 if [[ "$#" = 0 ]]; then
   case "${BUILD_IMAGE_PHASE:-}" in
-    build)
-      remote_build
-      exit $?
-      ;;
     install)
       remote_install
       exit $?
       ;;
-    *)
-      echo "ERROR: unknown build phase: $BUILD_IMAGE_PHASE" 1>&2
-      exit 1
+    build)
+      remote_build
+      exit $?
+      ;;
   esac
 fi
 
@@ -97,19 +102,22 @@ function main {
   esac
 
   case "${BUILD_IMAGE_PHASE:-}" in
-    build)
-      rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:${OVERRIDE_anchor}/vault/
-      ;;
     install)
       ssh -F $pth_ssh_config default mkdir -p ${OVERRIDE_anchor}/vault/packages
       rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/packages/${pkg_id}$(echo $OVERRIDE_anchor | tr / _)_pkg default:${OVERRIDE_anchor}/vault/packages/
+      ;;
+    *)
+      rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:${OVERRIDE_anchor}/vault/
       ;;
   esac
 
   standard_hook "$bootstrap" "$@"
 
   case "${BUILD_IMAGE_PHASE:-}" in
-    build)
+    install)
+      true
+      ;;
+    *)
         rsync -ia -e "ssh -F $pth_ssh_config" default:${OVERRIDE_anchor}/vault/distfiles $VAULT/
         rsync -ia -e "ssh -F $pth_ssh_config" default:${OVERRIDE_anchor}/vault/packages $VAULT/
       ;;
