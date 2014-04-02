@@ -99,7 +99,11 @@ function main {
     ssh -F $pth_ssh_config default sudo install -d -o $un -g $gn -m 755 ${OVERRIDE_anchor}/vault
   fi
 
-  ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
+  case "$BUILD_IMAGE_PHASE" in
+    build|bmake)
+      ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
+      ;;
+  esac
 
   local pkg_id
   local nm_os="$(ssh -F $pth_ssh_config default uname -s)"
