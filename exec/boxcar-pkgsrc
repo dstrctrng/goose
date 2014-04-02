@@ -77,6 +77,7 @@ bootstrap="$BASH_SOURCE"
 function main {
   local pth_ssh_config="$1"
 
+  set -x # TODO some mavericks hack?
   if ! ssh -F $pth_ssh_config default mkdir -p ${OVERRIDE_anchor}/vault 2>&-; then
     local un="$(ssh -F $pth_ssh_config default id -un)"
     local gn="$(ssh -F $pth_ssh_config default id -gn)"
@@ -85,23 +86,38 @@ function main {
 
   ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
 
+  local pkg_id
+  local nm_os="$(ssh -F $pth_ssh_config uname -s)"
+  case "$nm_os" in
+    Darwin)
+      pkg_id="${nm_os}_$(ssh -F $pth_ssh_config uname -r | cut -d. -f1)"
+      ;;
+    *)
+      pkg_id="${nm_os}"
+      ;;
+  esac
+
   case "${BUILD_IMAGE_PHASE:-}" in
     build)
       rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/distfiles default:${OVERRIDE_anchor}/vault/
       ;;
     install)
-      rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/packages default:${OVERRIDE_anchor}/vault/
+      ssh -F $pth_ssh_config default mkdir -p ${OVERRIDE_anchor}/vault/packages
+      rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/packages/${pkg_id}_pkg default:${OVERRIDE_anchor}/vault/packages/
       ;;
   esac
+  set +x
 
   standard_hook "$bootstrap" "$@"
 
+  set -x
   case "${BUILD_IMAGE_PHASE:-}" in
     build)
         rsync -ia -e "ssh -F $pth_ssh_config" default:${OVERRIDE_anchor}/vault/distfiles $VAULT/
         rsync -ia -e "ssh -F $pth_ssh_config" default:${OVERRIDE_anchor}/vault/packages $VAULT/
       ;;
   esac
+  set +x
 }
 
 require sub "$BASH_SOURCE" "$@"
