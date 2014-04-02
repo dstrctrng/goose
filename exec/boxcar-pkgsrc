@@ -86,10 +86,10 @@ function main {
   ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
 
   local pkg_id
-  local nm_os="$(ssh -F $pth_ssh_config uname -s)"
+  local nm_os="$(ssh -F $pth_ssh_config default uname -s)"
   case "$nm_os" in
     Darwin)
-      pkg_id="${nm_os}_$(ssh -F $pth_ssh_config uname -r | cut -d. -f1)"
+      pkg_id="${nm_os}_$(ssh -F $pth_ssh_config default uname -r | cut -d. -f1)"
       ;;
     *)
       pkg_id="${nm_os}"
@@ -102,7 +102,7 @@ function main {
       ;;
     install)
       ssh -F $pth_ssh_config default mkdir -p ${OVERRIDE_anchor}/vault/packages
-      rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/packages/${pkg_id}_pkg default:${OVERRIDE_anchor}/vault/packages/
+      rsync -ia -e "ssh -F $pth_ssh_config" $VAULT/packages/${pkg_id}$(echo $OVERRIDE_anchor | tr / _)_pkg default:${OVERRIDE_anchor}/vault/packages/
       ;;
   esac
 
