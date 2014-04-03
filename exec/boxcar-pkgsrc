@@ -19,7 +19,7 @@ function remote_build {
   mkdir -p pkgsrc pkg || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 pkgsrc pkg
 
   case "$BUILD_IMAGE_PHASE" in
-    build|bmake)
+    bmake)
       rm -rf pkgsrc pkg || true
       git clone -b pkgsrc_2013Q4 git@github.com:destructuring/pkgsrc pkgsrc
       ;;
@@ -30,14 +30,12 @@ function remote_build {
 
   cd pkgsrc
   case "$BUILD_IMAGE_PHASE" in
-    build)
-      make -f Makefile.goose SH=/bin/bash bmake
-      make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
-      make -f Makefile.goose SH=/bin/bash packages
-      ;;
     bmake)
       make -f Makefile.goose SH=/bin/bash bmake
       make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
+      ;;
+    build)
+      make -f Makefile.goose SH=/bin/bash packages
       ;;
     *)
       make -f Makefile.goose SH=/bin/bash PACKAGE="$BUILD_IMAGE_PHASE" package
@@ -100,7 +98,7 @@ function main {
   fi
 
   case "$BUILD_IMAGE_PHASE" in
-    build|bmake)
+    bmake)
       ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
       ;;
   esac
