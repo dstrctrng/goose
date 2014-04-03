@@ -19,6 +19,10 @@ function remote_install {
   cd goose
   cp config/aws.yml.example config/aws.yml
 
+  export PKG_HOME="$(pwd)/pkg"
+
+  PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
+
   source ../yarvm/libexec/_yarvm
   make
 
