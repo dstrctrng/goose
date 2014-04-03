@@ -13,15 +13,15 @@ function remote_install {
       ;;
   esac
 
+  export PKG_HOME="$(pwd)/pkg"
+
+  PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
+
   mkdir -p goose || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 goose
   rm -rf goose || true
   git clone https://github.com/destructuring/goose goose
   cd goose
   cp config/aws.yml.example config/aws.yml
-
-  export PKG_HOME="$(pwd)/pkg"
-
-  PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
 
   source ../yarvm/libexec/_yarvm
   make
