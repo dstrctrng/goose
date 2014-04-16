@@ -32,12 +32,13 @@ function remote_build {
   case "$BUILD_IMAGE_PHASE" in
     bmake)
       make -f Makefile.goose SH=/bin/bash bmake
-      make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
       ;;
     build)
+      make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
       make -f Makefile.goose SH=/bin/bash packages
       ;;
     *)
+      make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
       make -f Makefile.goose SH=/bin/bash PACKAGE="$BUILD_IMAGE_PHASE" package
       ;;
   esac
