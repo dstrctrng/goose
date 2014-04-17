@@ -24,8 +24,8 @@ bin/jq:
 	git submodule update --init --recursive
 	curl -O -L https://github.com/stedolan/jq/archive/jq-1.3.tar.gz
 	tar xvfz jq-1.3.tar.gz
-	cd jq-1.3 && aclocal && autoreconf -i
-	cd jq-1.3 && ./configure
-	cd jq-1.3 && make
-	mv jq-1.3/jq bin/jq
-	rm -rf jq-1.3.tar.gz jq-1.3
+	cd jq-jq-1.3 && aclocal && autoreconf -i
+	cd jq-jq-1.3 && ./configure
+	cd jq-jq-1.3 && make
+	mv jq-jq-1.3/jq bin/jq
+	rm -rf jq-jq-1.3.tar.gz jq-1.3
