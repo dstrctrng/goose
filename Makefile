@@ -22,7 +22,6 @@ config/aws.yml:
 
 bin/jq:
 	git submodule update --init --recursive
-	cd vendor/projects/jq && perl -pe 'm{^AC_PROG_YACC} && print "AC_PROG_AR\n"' -i configure.ac
 	cd vendor/projects/jq && libtoolize && aclocal
 	cd vendor/projects/jq && autoreconf -i
 	cd vendor/projects/jq && ./configure
