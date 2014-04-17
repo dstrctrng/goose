@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #/ NAME
-#/     boxcar-vendor - update pkgsrc, yarvm, and goose
+#/     boxcar-vendor - update pkgsrc, yarvm
 
 function remote_install {
   set -exfu
@@ -24,11 +24,6 @@ function remote_install {
   git pull
   make
   source libexec/_yarvm
-  popd
-
-  pushd goose
-  git pull
-  make
   popd
 }
 
