@@ -22,7 +22,6 @@ config/aws.yml:
 
 bin/jq:
 	git submodule update --init --recursive
-	cd vendor/projects/jq && libtoolize && aclocal
 	cd vendor/projects/jq && autoreconf -i
 	cd vendor/projects/jq && ./configure
 	cd vendor/projects/jq && make
