@@ -9,7 +9,7 @@ RMAKE := unset BUNDLE_GEMFILE BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PA
 
 all: ready
 
-ready: config/aws.yml bin/jq
+ready: config/aws.yml
 	git submodule update --init --recursive
 	cd vendor/projects/boxcar && $(RMAKE)
 	cd vendor/projects/offline && $(RMAKE)
