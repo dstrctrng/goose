@@ -22,7 +22,7 @@ config/aws.yml:
 
 bin/jq:
 	git submodule update --init --recursive
-	cd vendor/projects/jq && autoreconf -i
+	cd vendor/projects/jq && aclocal && autoreconf -i
 	cd vendor/projects/jq && ./configure
 	cd vendor/projects/jq && make
 	mv vendor/projects/jq/jq bin/jq
