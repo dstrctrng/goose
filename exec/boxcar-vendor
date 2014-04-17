@@ -11,10 +11,14 @@ function remote_install {
 
   PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
 
-  # update everything
-  sudo -E aptitude update
-  sudo -E aptitude -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew dist-upgrade
-  sudo -E aptitude -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew safe-upgrade
+  case "$(uname -s)" in
+    Linux)
+      # update everything
+      sudo -E aptitude update
+      sudo -E aptitude -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew dist-upgrade
+      sudo -E aptitude -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confnew safe-upgrade
+    ;;
+  esac
 
   pushd pkgsrc
   # TODO install updated packages
