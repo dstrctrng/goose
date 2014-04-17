@@ -22,7 +22,10 @@ config/aws.yml:
 
 bin/jq:
 	git submodule update --init --recursive
-	cd vendor/projects/jq && aclocal && autoreconf -i
-	cd vendor/projects/jq && ./configure
-	cd vendor/projects/jq && make
-	mv vendor/projects/jq/jq bin/jq
+	curl -O https://github.com/stedolan/jq/archive/jq-1.3.tar.gz
+	tar xvfz jq-1.3.tar.gz
+	cd jq-1.3 && aclocal && autoreconf -i
+	cd jq-1.3 && ./configure
+	cd jq-1.3 && make
+	mv jq-1.3/jq bin/jq
+	rm -rf jq-1.3.tar.gz jq-1.3
