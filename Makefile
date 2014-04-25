@@ -9,7 +9,7 @@ RMAKE := unset BUNDLE_GEMFILE BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PA
 
 all: ready
 
-ready: config/aws.yml
+ready: config/aws.yml bin/jq
 	git submodule update --init --recursive
 	cd vendor/projects/boxcar && $(RMAKE)
 	cd vendor/projects/offline && $(RMAKE)
@@ -22,8 +22,9 @@ config/aws.yml:
 
 bin/jq:
 	git submodule update --init --recursive
-	curl -O -L http://stedolan.github.io/jq/download/source/jq-1.3.tar.gz
-	tar xvfz jq-1.3.tar.gz
-	cd jq-1.3 && configure && make
-	mv jq-1.3/jq bin/jq
-	rm -rf jq-1.3.tar.gz jq-1.3
+	cd vendor/projects/jq && libtoolize
+	cd vendor/projects/jq && aclocal
+	cd vendor/projects/jq && autoreconf -i
+	cd vendor/projects/jq && ./configure
+	cd vendor/projects/jq && make
+	mv vendor/projects/jq/jq bin/jq
