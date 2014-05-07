@@ -60,7 +60,7 @@ __EOF
 instance-id: precise
 local-hostname: precise
 public-keys:
-  vagrant: [$(curl https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub), '']
+  vagrant: [$(curl https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub), '']
 __EOF
   sudo install -o root -g root -m 0600 $tmp_cloud $prefix/var/lib/cloud/seed/nocloud/meta-data
 
