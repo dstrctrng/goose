@@ -1,5 +1,5 @@
 { "builders": [ {
-    "type": "virtualbox",
+    "type": "virtualbox-iso",
     "vm_name": "precise",
     "boot_command": [
       "<esc><esc><enter><wait>",
@@ -10,6 +10,7 @@
       "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false <wait>",
       "initrd=/install/initrd.gz -- <enter><wait>"
     ],
+    "headless": true,
     "http_directory" : "preseed",
     "boot_wait": "4s",
     "disk_size": 50000,

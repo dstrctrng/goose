@@ -4,15 +4,16 @@ source _jason
 require _goose
 
 nm_release="precise"
-nm_provider="virtualbox"
+nm_provider="virtualbox-iso"
+nm_vagrant_provider="virtualbox"
 
 rm -rf $GOOSE/output-${nm_provider}
 rm -rf "$HOME/VirtualBox VMs/${nm_release}"
 env PACKER_CACHE_DIR=$VAULT/packer_cache packer build $GOOSE/config/${nm_release}/${nm_provider}.json
 cd $GOOSE/output-${nm_provider}
 (set +f; ln -nfs *.ovf box.ovf)
-echo '{"provider":"'"${nm_provider}"'"}' > metadata.json
+echo '{"provider":"'"${nm_vagrant_provider}"'"}' > metadata.json
 tar cvfz $GOOSE/boxes/${nm_provider}.box.tmp .
 mv $GOOSE/boxes/${nm_provider}.box.tmp $GOOSE/boxes/${nm_provider}.box
-vagrant box remove ${nm_release} ${nm_provider} 2>&- || true
+vagrant box remove ${nm_release} ${nm_vagrant_provider} 2>&- || true
 vagrant box add ${nm_release} $GOOSE/boxes/${nm_provider}.box
