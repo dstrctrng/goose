@@ -6,7 +6,6 @@
 function remote_build {
   set -exfu
 
-  BUILD_IMAGE_PHASE=precise
   exec 2>&1
   echo ubuntu | sudo -S true
 
@@ -37,8 +36,8 @@ __EOF
   local tmp_cloud="$(mktemp -t XXXXXX)"
   sudo mkdir -p $prefix/var/lib/cloud/seed/nocloud
   cat > $tmp_cloud << __EOF
-instance-id: precise
-local-hostname: precise
+instance-id: $BUILD_IMAGE_PHASE
+local-hostname: $BUILD_IMAGE_PHASE
 public-keys:
   vagrant: [$(curl https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub), '']
 __EOF
@@ -84,7 +83,7 @@ bootstrap="$BASH_SOURCE"
 
 # entry point
 function main {
-  local pth_ssh_config="$1"
+  BUILD_IMAGE_PHASE=$1; shift
 
   case "${BUILD_IMAGE_PHASE:-}" in
     install)

@@ -3,7 +3,7 @@
 source _jason
 require _goose
 
-nm_release="precise"
+nm_release="$1"; shift
 nm_provider="virtualbox-iso"
 nm_vagrant_provider="virtualbox"
 

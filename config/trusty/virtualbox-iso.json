@@ -1,6 +1,6 @@
 { "builders": [ {
     "type": "virtualbox-iso",
-    "vm_name": "precise",
+    "vm_name": "trusty",
     "boot_command": [
       "<esc><esc><enter><wait>",
       "/install/vmlinuz noapic preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg <wait>",
@@ -10,14 +10,14 @@
       "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false <wait>",
       "initrd=/install/initrd.gz -- <enter><wait>"
     ],
-    "headless": true,
+    "headless": false,
     "http_directory" : "preseed",
     "boot_wait": "4s",
     "disk_size": 50000,
     "guest_os_type": "Ubuntu_64",
-    "http_directory": "config/precise",
-    "iso_url": "http://releases.ubuntu.com/12.04/ubuntu-12.04.4-server-amd64.iso",
-    "iso_checksum": "e83adb9af4ec0a039e6a5c6e145a34de",
+    "http_directory": "config/trusty",
+    "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04-server-amd64.iso",
+    "iso_checksum": "01545fa976c8367b4f0d59169ac4866c",
     "iso_checksum_type": "md5",
     "ssh_username": "ubuntu",
     "ssh_password": "ubuntu",
@@ -44,7 +44,7 @@
   "provisioners": [ {
     "type": "shell",
     "scripts": [
-      "exec/packer-virtualbox-precise"
+      "exec/packer-virtualbox-trusty"
     ]
   } ]
 }
