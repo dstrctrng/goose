@@ -14,7 +14,7 @@ function main {
     set +f
     for a in $VAULT/boxcar/$r/aws/*.box; do 
       if [[ -r "$a" ]]; then
-        vagrant box remove $r-$(basename $a .box) aws 2>&1 > /dev/null || true
+        vagrant box remove --provider aws --force $r-$(basename $a .box) 2>&1 > /dev/null || true
         vagrant box add $r-$(basename $a .box) $a 
       fi
     done

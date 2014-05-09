@@ -15,5 +15,5 @@ cd $GOOSE/output-${nm_provider}
 echo '{"provider":"'"${nm_vagrant_provider}"'"}' > metadata.json
 tar cvfz $GOOSE/boxes/${nm_provider}.box.tmp .
 mv $GOOSE/boxes/${nm_provider}.box.tmp $GOOSE/boxes/${nm_provider}.box
-vagrant box remove ${nm_release} ${nm_vagrant_provider} 2>&- || true
+vagrant box remove --provider ${nm_vagrant_provider} --force ${nm_release} 2>&- || true
 vagrant box add ${nm_release} $GOOSE/boxes/${nm_provider}.box

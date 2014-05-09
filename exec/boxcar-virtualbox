@@ -9,7 +9,16 @@ function remote_build {
   exec 2>&1
   echo ubuntu | sudo -S true
 
-  container_build "$BUILD_IMAGE_PHASE"
+  source /etc/lsb-release
+
+
+  container_build "$DISTRIB_CODENAME"
+}
+
+function remote_install {
+  set -exfu
+
+  source /etc/lsb-release
 }
 
 function container_build {
@@ -17,27 +26,80 @@ function container_build {
   local prefix=""
   local sudo="sudo"
 
+  local tmp_cloud="$(mktemp -t XXXXXX)"
+
   # minimal install
-  source /etc/lsb-release
-  sudo -E env DEBIAN_FRONTEND=noninteractive aptitude -y install -t "${DISTRIB_CODENAME}-backports" debootstrap
+  sudo -E env DEBIAN_FRONTEND=noninteractive aptitude -y install cloud-init
+
+  cat > $tmp_cloud << __EOF
+manual
+__EOF
+  sudo install -o root -g root -m 0644 $tmp_cloud $prefix/etc/init/cloud-init.override
+
+  # complete list of apt repos
+  local d='$'
+  cat > $tmp_cloud << __EOF
+\## Note, this file is written by cloud-init on first boot of an instance
+\## modifications made here will not survive a re-bundle.
+\## if you wish to make changes you can:
+\## a.) add 'apt_preserve_sources_list: true' to /etc/cloud/cloud.cfg
+\##     or do the same in user-data
+\## b.) add sources in /etc/apt/sources.list.d
+\## c.) make changes to template file /etc/cloud/templates/sources.list.tmpl
+\###
+
+\## main
+deb ${d}mirror ${d}codename main
+deb-src ${d}mirror ${d}codename main
+
+\## updates
+deb ${d}mirror ${d}codename-updates main
+deb-src ${d}mirror ${d}codename-updates main
+
+\## universe
+deb ${d}mirror ${d}codename universe
+deb-src ${d}mirror ${d}codename universe
+deb ${d}mirror ${d}codename-updates universe
+deb-src ${d}mirror ${d}codename-updates universe
+
+\## multiverse
+deb ${d}mirror ${d}codename multiverse
+deb-src ${d}mirror ${d}codename multiverse
+deb ${d}mirror ${d}codename-updates multiverse
+deb-src ${d}mirror ${d}codename-updates multiverse
+
+\## backports
+deb ${d}mirror ${d}codename-backports main restricted universe multiverse
+deb-src ${d}mirror ${d}codename-backports main restricted universe multiverse
+
+\## partner
+deb http://archive.canonical.com/ubuntu ${d}codename partner
+deb-src http://archive.canonical.com/ubuntu ${d}codename partner
+
+\## security
+deb http://security.ubuntu.com/ubuntu ${d}codename-security main
+deb-src http://security.ubuntu.com/ubuntu ${d}codename-security main
+deb http://security.ubuntu.com/ubuntu ${d}codename-security universe
+deb-src http://security.ubuntu.com/ubuntu ${d}codename-security universe
+deb http://security.ubuntu.com/ubuntu ${d}codename-security multiverse
+deb-src http://security.ubuntu.com/ubuntu ${d}codename-security multiverse
+__EOF
+  sudo install -o root -g root -m 0400 "$tmp_cloud" $prefix/etc/cloud/templates/sources.list.tmpl
 
   # sudo permissions
-  local tmp_sudo="$(mktemp -t XXXXXX)"
-  cat > $tmp_sudo <<__EOF
+  cat > $tmp_cloud <<__EOF
 # ubuntu user is default user in cloud-images.
 # It needs passwordless sudo functionality.
 ubuntu ALL=(ALL) NOPASSWD:ALL
 __EOF
-
-  sudo install -o root -g root -m 0400 "$tmp_sudo" $prefix/etc/sudoers.d/90-cloud-init-users
-  rm -f "$tmp_sudo"
+  sudo install -o root -g root -m 0400 "$tmp_cloud" $prefix/etc/sudoers.d/90-cloud-init-users
 
   # cloud init
-  local tmp_cloud="$(mktemp -t XXXXXX)"
   sudo mkdir -p $prefix/var/lib/cloud/seed/nocloud
+
   cat > $tmp_cloud << __EOF
-instance-id: $BUILD_IMAGE_PHASE
-local-hostname: $BUILD_IMAGE_PHASE
+instance-id: $nm_distro-$(date +%s)
+local-hostname: $nm_distro
 public-keys:
   vagrant: [$(curl https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub), '']
 __EOF
@@ -45,24 +107,32 @@ __EOF
 
   cat > $tmp_cloud  << __EOF
 #cloud-config
+disable_root: false
+manage_etc_hosts: true
 __EOF
   sudo install -o root -g root -m 0600 $tmp_cloud $prefix/var/lib/cloud/seed/nocloud/user-data
 
-  rm -f $tmp_cloud
-
   # run and verify cloud init
-  ${sudo} cloud-init start-local || true
-  ${sudo} cloud-init-cfg all config
-  ${sudo} cloud-init-cfg all final
-  ${sudo} id -a ubuntu
-  ${sudo} sudo id -a ubuntu
-  ${sudo} cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
-  sudo rm -f $prefix/var/lib/cloud/seed/nocloud/meta-data
+  if ${sudo} cloud-init init --local; then
+    ${sudo} cloud-init modules --mode config
+    ${sudo} cloud-init modules --mode final
+  else
+    ${sudo} cloud-init start-local || true
+    ${sudo} cloud-init-cfg all config || true
+    ${sudo} cloud-init-cfg all final || true
+  fi
 
   # cleanup
-  sudo rm -rf /etc/udev/rules.d/70-persistent-net.rules /lib/udev/rules.d/75-persistent-net-generator.rules /dev/.udev /var/lib/dhcp3
-  sudo mkdir -p /etc/udev/rules.d/70-persistent-net.rules
+  rm -f $tmp_cloud
+  sudo rm -f $prefix/var/lib/cloud/seed/nocloud/meta-data
+  sudo rm -rf $prefix/etc/udev/rules.d/70-persistent-net.rules $prefix/lib/udev/rules.d/75-persistent-net-generator.rules $prefix/dev/.udev /var/lib/dhcp3
+  sudo mkdir -p $prefix/etc/udev/rules.d/70-persistent-net.rules
   ${sudo} aptitude clean
+
+  # debug
+  ${sudo} id -a ubuntu
+  ${sudo} -u ubuntu sudo id -a ubuntu
+  ${sudo} cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
 }
 
 if [[ "$#" = 0 ]]; then
@@ -82,13 +152,10 @@ bootstrap="$BASH_SOURCE"
 
 # entry point
 function main {
-  BUILD_IMAGE_PHASE=$1; shift
+  source /etc/lsb-release
 
   case "${BUILD_IMAGE_PHASE:-}" in
-    install)
-      true
-      ;;
-    *)
+    build)
       standard_hook "$bootstrap" "$@"
       ;;
   esac
