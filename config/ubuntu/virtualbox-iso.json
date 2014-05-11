@@ -1,12 +1,13 @@
 { "variables": {
     "release": null,
+    "build_name": null,
     "iso_url": null,
     "iso_checksum": null,
     "iso_checksum_type": "md5"
   },
   "builders": [ {
     "type": "virtualbox-iso",
-    "name": "{{ user `release` }}-virtualbox-iso",
+    "name": "{{ user `build_name` }}",
     "vm_name": "{{ user `release` }}",
     "boot_command": [
       "<esc><esc><enter><wait>",

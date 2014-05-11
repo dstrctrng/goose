@@ -6,13 +6,14 @@ require _goose
 nm_release="$1"; shift
 nm_packer_builder="virtualbox-iso"
 nm_vagrant_provider="virtualbox"
+nm_build="${nm_release}-${nm_packer_builder}"
 
-rm -rf "$GOOSE/output-${nm_release}-${nm_packer_builder}"
+rm -rf "$GOOSE/output-${nm_build}"
 rm -rf "$HOME/VirtualBox VMs/${nm_release}"
 
-env PACKER_CACHE_DIR=$VAULT/packer_cache packer build -var-file="$GOOSE/config/${nm_release}.json" $GOOSE/config/ubuntu/${nm_packer_builder}.json
+env PACKER_CACHE_DIR=$VAULT/packer_cache packer build -var build_name="$nm_build" -var-file="$GOOSE/config/${nm_release}.json" $GOOSE/config/ubuntu/${nm_packer_builder}.json
 
-cd "$GOOSE/output-${nm_release}-${nm_packer_builder}"
+cd "$GOOSE/output-${nm_build}"
 (set +f; ln -nfs *.ovf box.ovf)
 echo '{"provider":"'"${nm_vagrant_provider}"'"}' > metadata.json
 tar cvfz $GOOSE/boxes/${nm_vagrant_provider}.box.tmp .
