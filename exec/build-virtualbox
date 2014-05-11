@@ -7,6 +7,7 @@ nm_release="$1"; shift
 nm_packer_builder="virtualbox-iso"
 nm_vagrant_provider="virtualbox"
 nm_build="${nm_release}-${nm_packer_builder}"
+nm_box="${nm_release}-${nm_vagrant_provider}.box"
 
 rm -rf "$GOOSE/output-${nm_build}"
 rm -rf "$HOME/VirtualBox VMs/${nm_release}"
@@ -16,8 +17,8 @@ env PACKER_CACHE_DIR=$VAULT/packer_cache packer build -var build_name="$nm_build
 cd "$GOOSE/output-${nm_build}"
 (set +f; ln -nfs *.ovf box.ovf)
 echo '{"provider":"'"${nm_vagrant_provider}"'"}' > metadata.json
-tar cvfz $GOOSE/boxes/${nm_vagrant_provider}.box.tmp .
-mv $GOOSE/boxes/${nm_vagrant_provider}.box.tmp $GOOSE/boxes/${nm_vagrant_provider}.box
+tar cvfz $GOOSE/boxes/${nm_box}.tmp .
+mv $GOOSE/boxes/${nm_box}.tmp $GOOSE/boxes/${nm_box}
 
 vagrant box remove --provider ${nm_vagrant_provider} --force ${nm_release} 2>&- || true
-vagrant box add ${nm_release} $GOOSE/boxes/${nm_vagrant_provider}.box
+vagrant box add ${nm_release} $GOOSE/boxes/${nm_box}
