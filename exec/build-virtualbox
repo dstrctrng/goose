@@ -16,7 +16,7 @@ env PACKER_CACHE_DIR=$VAULT/packer_cache packer build -var build_name="$nm_build
 
 cd "$GOOSE/output-${nm_build}"
 (set +f; ln -nfs *.ovf box.ovf)
-echo '{"provider":"'"${nm_vagrant_provider}"'"}' > metadata.json
+jq -n --arg provider "${nm_vagrant_provider}" '{"provider": $provider}' > metadata.json
 tar cvfz $GOOSE/boxes/${nm_box}.tmp .
 mv $GOOSE/boxes/${nm_box}.tmp $GOOSE/boxes/${nm_box}
 
