@@ -6,25 +6,24 @@
 function remote_build {
   set -exfu
 
-  exec 2>&1
-  echo ubuntu | sudo -S true
-
   source /etc/lsb-release
 
-
-  container_build "$DISTRIB_CODENAME"
+  container_install "$DISTRIB_CODENAME"
+  container_build "$DISTRIB_CODENAME" "" "sudo"
 }
 
 function remote_install {
   set -exfu
 
   source /etc/lsb-release
+
+  container_install "$DISTRIB_CODENAME"
 }
 
 function container_build {
   local nm_distro="$1"; shift
-  local prefix=""
-  local sudo="sudo"
+  local prefix="$1"; shift
+  local sudo="$1"; shift
 
   local tmp_cloud="$(mktemp -t XXXXXX)"
 
@@ -144,9 +143,21 @@ __EOF
   ${sudo} cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
 }
 
+function container_install {
+  local nm_distro="$1"; shift
+}
+
 if [[ "$#" = 0 ]]; then
-  remote_build
-  exit $?
+  case "${BUILD_IMAGE_PHASE:-}" in
+    install)
+      remote_install
+      exit $?
+      ;;
+    build) 
+      remote_build
+      exit $?
+      ;;
+  esac
 fi
 
 # figure out the project root under which bin, lib live
@@ -161,9 +172,17 @@ bootstrap="$BASH_SOURCE"
 
 # entry point
 function main {
+  local pth_ssh_config="$1"
+
   source /etc/lsb-release
 
+  ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
+  ssh -F $pth_ssh_config default mkdir -p ${OVERRIDE_anchor}/vault/images
+
   case "${BUILD_IMAGE_PHASE:-}" in
+    install)
+      standard_hook "$bootstrap" "$@"
+      ;;
     build)
       standard_hook "$bootstrap" "$@"
       ;;

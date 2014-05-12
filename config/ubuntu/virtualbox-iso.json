@@ -52,6 +52,7 @@
   "provisioners": [ {
     "type": "shell",
     "scripts": [
+      "exec/packager-virtualbox-sudo",
       "exec/boxcar-virtualbox"
     ]
   } ]

@@ -8,8 +8,8 @@ function remote_build {
 
   source /etc/lsb-release
 
-  docker_install "$DISTRIB_CODENAME"
-  container_build "$DISTRIB_CODENAME"
+  container_install "$DISTRIB_CODENAME"
+  container_build "$DISTRIB_CODENAME" "image" "sudo chroot image"
 }
 
 function remote_install {
@@ -17,13 +17,13 @@ function remote_install {
 
   source /etc/lsb-release
 
-  docker_install "$DISTRIB_CODENAME"
+  container_install "$DISTRIB_CODENAME"
 }
 
 function container_build {
   local nm_distro="$1"; shift
-  local prefix="image"
-  local sudo="sudo chroot image"
+  local prefix="$1"; shift
+  local sudo="$1"; shift
 
   local tmp_cloud="$(mktemp -t XXXXXX)"
 
@@ -46,8 +46,8 @@ function container_build {
   # update install with server distribution
   sudo -E chroot image apt-get install -y minimal^ server^ standard^
 
-  # create ubuntu user # TODO get cloud-init to make ubuntu account?
-  ${sudo} useradd -u 1000 -U -m ubuntu -s /bin/bash -G adm,dialout,cdrom,floppy,audio,dip,video,plugdev,netdev
+  # create ubuntu user
+  ${sudo} useradd -u 1000 -U -m ubuntu -s /bin/bash -G adm,audio,cdrom,dip,lpadmin,plugdev,sambashare,sudo
 
   cat > $tmp_cloud << __EOF
 manual
@@ -127,6 +127,15 @@ __EOF
 #cloud-config
 disable_root: false
 manage_etc_hosts: true
+system_info:
+   distro: ubuntu
+   default_user:
+     name: ubuntu
+     lock_passwd: True
+     gecos: Ubuntu
+     groups: [adm, audio, cdrom, dip, lpadmin, plugdev, sambashare, sudo]
+     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+     shell: /bin/bash
 __EOF
   sudo install -o root -g root -m 0600 $tmp_cloud $prefix/var/lib/cloud/seed/nocloud/user-data
 
@@ -162,7 +171,7 @@ __EOF
   sudo tar cfp docker-${nm_distro}.tar -C image .
 }
 
-function docker_install {
+function container_install {
   local nm_distro="$1"; shift
 
   sudo apt-key add - <<__EOF
