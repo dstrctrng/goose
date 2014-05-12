@@ -109,6 +109,15 @@ __EOF
 #cloud-config
 disable_root: false
 manage_etc_hosts: true
+system_info:
+   distro: ubuntu
+   default_user:
+     name: ubuntu
+     lock_passwd: True
+     gecos: Ubuntu
+     groups: [adm, audio, cdrom, dip, lpadmin, plugdev, sambashare, sudo]
+     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+     shell: /bin/bash
 __EOF
   sudo install -o root -g root -m 0600 $tmp_cloud $prefix/var/lib/cloud/seed/nocloud/user-data
 
