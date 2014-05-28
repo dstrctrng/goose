@@ -3,7 +3,8 @@
     "build_name": null,
     "iso_url": null,
     "iso_checksum": null,
-    "iso_checksum_type": "md5"
+    "iso_checksum_type": "md5",
+    "proxy": ""
   },
   "builders": [ {
     "type": "virtualbox-iso",
@@ -16,11 +17,11 @@
       "hostname={{ user `release` }} <wait>",
       "fb=false debconf/frontend=noninteractive <wait>",
       "keyboard-configuration/modelcode=SKIP keyboard-configuration/layout=USA keyboard-configuration/variant=USA console-setup/ask_detect=false <wait>",
-      "initrd=/install/initrd.gz -- <enter><wait>"
+      "initrd=/install/initrd.gz -- mirror/http/proxy={{ user `proxy` }} <enter><wait>"
     ],
     "iso_url": "{{ user `iso_url` }}",
     "iso_checksum": "{{ user `iso_checksum` }}",
-    "headless": true,
+    "headless": false,
     "http_directory" : "preseed",
     "boot_wait": "4s",
     "disk_size": 50000,
@@ -52,7 +53,7 @@
   "provisioners": [ {
     "type": "shell",
     "scripts": [
-      "exec/packager-virtualbox-sudo",
+      "exec/packer-virtualbox-sudo",
       "exec/boxcar-virtualbox"
     ]
   } ]

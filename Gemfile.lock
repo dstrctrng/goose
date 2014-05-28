@@ -10,7 +10,7 @@ GEM
       gyoku (>= 0.4.0)
       nokogiri
     alox (0.0.9)
-    alox-jason (0.0.34)
+    alox-jason (0.0.35)
     builder (3.2.2)
     celluloid (0.15.2)
       timers (~> 1.1.0)
