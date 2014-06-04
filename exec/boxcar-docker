@@ -36,7 +36,7 @@ function container_build {
             ${nm_distro} image http://archive.ubuntu.com/ubuntu/
 
   # workarounds
-  printf "%s\n%s\n" "#!/bin/bash" "exit 101" | sudo tee $prefix/usr/sbin/policy-rc.d
+  printf "%s\n%s\n" "#!/usr/bin/env bash" "exit 101" | sudo tee $prefix/usr/sbin/policy-rc.d
   sudo chmod 0755 $prefix/usr/sbin/policy-rc.d
 
   # pretend upstart services always succeed
