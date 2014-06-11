@@ -6,6 +6,7 @@ gemspec
 gem "vagrant", "1.6.0"
 gem "vagrant-aws", "0.4.1"
 gem "vagrant-shell"
+gem "unf"
 
 # alox
 gem "alox"
