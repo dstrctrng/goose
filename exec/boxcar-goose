@@ -26,12 +26,11 @@ function remote_install {
   source ../yarvm/libexec/_yarvm
   make
 
-  bin/shell vagrant box add static boxes/static.box
-
-  bin/shell vagrant box add precise boxes/docker.box
-  bin/shell vagrant box add precise boxes/aws.box
-  bin/shell vagrant box add precise boxes/static.box
-  bin/shell vagrant box add precise-clean boxes/static.box
+  bin/shell vagrant box add static boxes/static.box || true
+  bin/shell vagrant box add precise boxes/docker.box || true
+  bin/shell vagrant box add precise boxes/aws.box || true
+  bin/shell vagrant box add precise boxes/static.box || true
+  bin/shell vagrant box add precise-clean boxes/static.box || true
 }
 
 if [[ "$#" = 0 ]]; then
