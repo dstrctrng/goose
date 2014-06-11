@@ -28,6 +28,7 @@ function remote_build {
   make
   make binary
   make install
+  make test
 
   cd test
   ./run
