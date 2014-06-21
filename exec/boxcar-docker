@@ -31,7 +31,7 @@ function container_build {
   sudo -E env DEBIAN_FRONTEND=noninteractive aptitude -y install cloud-init
 
   sudo -E env DEBIAN_FRONTEND=noninteractive aptitude -y install debootstrap
-  rm -rf image; mkdir image
+  sudo rm -rf image; mkdir image
   sudo -E debootstrap --arch amd64 --include=language-pack-en,aptitude,openssh-server,cloud-init \
             ${nm_distro} image http://archive.ubuntu.com/ubuntu/
 
@@ -47,7 +47,7 @@ function container_build {
   sudo -E chroot image apt-get install -y minimal^ server^ standard^
 
   # create ubuntu user
-  ${sudo} useradd -u 1000 -U -m ubuntu -s /bin/bash -G adm,audio,cdrom,dip,lpadmin,plugdev,sambashare,sudo
+  ${sudo} useradd -u 1000 -U -m ubuntu -s /bin/bash -G adm,audio,cdrom,dip,plugdev,sudo
 
   cat > $tmp_cloud << __EOF
 manual
@@ -158,7 +158,7 @@ __EOF
 
   # debug
   ${sudo} id -a ubuntu
-  ${sudo} -u ubuntu sudo id -a ubuntu
+  ${sudo} sudo -u ubuntu sudo id -a ubuntu
   ${sudo} cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
 
   # enable upstart in image
@@ -236,8 +236,6 @@ bootstrap="$BASH_SOURCE"
 function main {
   local pth_ssh_config="$1"
 
-  source /etc/lsb-release
-
   ssh -F $pth_ssh_config default rm -rf ${OVERRIDE_anchor}/vault || true
   ssh -F $pth_ssh_config default mkdir -p ${OVERRIDE_anchor}/vault/images
 
@@ -248,7 +246,7 @@ function main {
       ;;
     build)
       standard_hook "$bootstrap" "$@"
-      rsync -ia -e "ssh -F '$pth_ssh_config'" default:${OVERRIDE_anchor}/docker-${DISTRIB_CODENAME}.tar ${VAULT}/images/
+      rsync -ia -e "ssh -F '$pth_ssh_config'" default:${OVERRIDE_anchor}/docker-${OVERRIDE_release}.tar ${VAULT}/images/
       ;;
   esac
 }
