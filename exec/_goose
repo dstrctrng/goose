@@ -7,8 +7,6 @@ export YARVM="${YARVM:=$(unset CDPATH; cd -P -- "$GOOSE/.." && pwd -P)/yarvm}"
 export GOOSE="${GOOSE:=$(unset CDPATH; cd -P -- "$GOOSE/.." && pwd -P)/goose}"
 
 export BOXCAR="$GOOSE"
-export AWSME="$GOOSE"
-export AWSME_CLI="$GOOSE/vendor/projects/awsme_cli"
 
 export PORT_SSHD_FILE="$GOOSE/config/sshd.port"
 export PORT_PROXY_FILE="$GOOSE/config/proxy.port"
@@ -20,7 +18,6 @@ export VAGRANT_I_KNOW_WHAT_IM_DOING_PLEASE_BE_QUIET=1
 
 function require_ {
   source "$GOOSE/vendor/projects/boxcar/libexec/_boxcar"
-  source "$GOOSE/vendor/projects/awsme/libexec/_awsme"
 }
 
 require_
