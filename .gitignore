@@ -12,3 +12,7 @@
 /config/ssh_agent
 /config/sshd.port
 /bin/jq
+/vendor/projects/jq.py/_jq-lib-1.4.tar.gz
+/vendor/projects/jq.py/build/
+/vendor/projects/jq.py/dist/
+/vendor/projects/jq.py/jq-jq-1.4/
