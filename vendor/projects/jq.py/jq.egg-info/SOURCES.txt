@@ -2,6 +2,7 @@ MANIFEST.in
 README.rst
 jq.c
 jq.pyx
+setup.cfg
 setup.py
 jq.egg-info/PKG-INFO
 jq.egg-info/SOURCES.txt
