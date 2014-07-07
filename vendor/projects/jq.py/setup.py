@@ -37,8 +37,10 @@ class jq_build_ext(build_ext):
         def command(args):
             subprocess.check_call(args, cwd=jq_lib_dir)
         
+        command(["libtoolize"])
+        command(["aclocal"])
         command(["autoreconf", "-i"])
-        command(["./configure", "CFLAGS=-fPIC"])
+        command(["./configure"])
         command(["make"])
         
         build_ext.run(self)
