@@ -29,7 +29,7 @@ function main {
   hash -r
   echo "FOUND: $(which python)"
   echo "FOUND: $(which pip)"
-  "$shome/bin/puddle" install virtualenv
+  pip install virtualenv
   hash -r
   echo "FOUND: $(which virtualenv)"
   virtualenv -p "$cmd_python" "$vhome"
@@ -37,7 +37,7 @@ function main {
   hash -r
   echo "FOUND: $(which python)"
   echo "FOUND: $(which pip)"
-  "$shome/bin/puddle" install virtualenv
+  pip install virtualenv
   echo "FOUND: $(which virtualenv)"
   rm -rf "$vhome.bootstrap"
 }
