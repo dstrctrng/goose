@@ -4,6 +4,10 @@ set -efu
 
 GOOSE="${GOOSE:=$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)}"
 
+if [[ -f $GOOSE/../yarvm/libexec/_yarvm ]]; then
+  source $GOOSE/../yarvm/libexec/_yarvm
+fi
+
 unset BUNDLE_GEMFILE BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PATH
 export BUNDLE_GEMFILE="$GOOSE/Gemfile"
 exec bundle exec alox "$0" "$@" 
