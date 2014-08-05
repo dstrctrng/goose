@@ -24,7 +24,7 @@ function main {
   echo "FOUND: $cmd_python"
   echo "FOUND: $(which pip)"
   echo "FOUND: $(which virtualenv)"
-  virtualenv -p "$cmd_python" --no-setuptools "$vhome"
+  virtualenv -p "$cmd_python" "$vhome"
   set +u; source $shome/bin/activate; set -u
   hash -r
   echo "FOUND: $(which python)"
