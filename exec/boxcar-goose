@@ -9,7 +9,7 @@ function remote_install {
   case "$(uname -s)" in
     Linux)
       sudo -E aptitude update
-      sudo -E aptitude install -y flex python-{dev,pip,virtualenv}
+      sudo -E aptitude install -y flex python-{dev,pip,setuptools,virtualenv}
       ;;
   esac
 
