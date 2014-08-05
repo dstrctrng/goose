@@ -21,7 +21,6 @@ function remote_install {
   rm -rf goose || true
   git clone https://github.com/destructuring/goose goose
   cd goose
-  cp config/aws.yml.example config/aws.yml
 
   source ../yarvm/libexec/_yarvm
   make
