@@ -26,7 +26,7 @@ function remote_install {
   make
 
   bin/shell vagrant box add static boxes/static.box || true
-  bin/shell vagrant box add precise boxes/docker.box || true
+  bin/shell vagrant box add precise boxes/dcker.box || true
   bin/shell vagrant box add precise boxes/aws.box || true
   bin/shell vagrant box add precise boxes/static.box || true
   bin/shell vagrant box add precise-clean boxes/static.box || true
