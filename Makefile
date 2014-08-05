@@ -16,8 +16,8 @@ ready:
 	$(MAKE) bin/jq
 
 bin/python:
-	bin/puddle init
-	bin/puddle install
+	env PATH=$(PATH):/usr/local/bin bin/puddle init
+	env PATH=$(PATH):/usr/local/bin bin/puddle install
 
 bin/jq: bin/python
 	git submodule update --init --recursive
