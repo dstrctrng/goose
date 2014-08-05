@@ -32,6 +32,7 @@ function main {
   "$shome/bin/puddle" install virtualenv
   hash -r
   echo "FOUND: $(which virtualenv)"
+  rm -f $vhome/bin/python 
   virtualenv -p "$cmd_python" "$vhome"
   echo "FOUND: $(which python)"
   echo "FOUND: $(which pip)"
