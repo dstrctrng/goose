@@ -24,17 +24,22 @@ function main {
   echo "FOUND: $cmd_python"
   echo "FOUND: $(which pip)"
   echo "FOUND: $(which virtualenv)"
-  virtualenv -p "$cmd_python" "$vhome"
-  set +u; source $shome/bin/activate; set -u
+  virtualenv -p "$cmd_python" "$vhome.bootstrap"
+  set +u; source $vhome.bootstrap/bin/activate; set -u
   hash -r
   echo "FOUND: $(which python)"
   echo "FOUND: $(which pip)"
   "$shome/bin/puddle" install virtualenv
   hash -r
   echo "FOUND: $(which virtualenv)"
-  #virtualenv -p "$cmd_python" "$vhome"
-  #echo "FOUND: $(which python)"
-  #echo "FOUND: $(which pip)"
+  virtualenv -p "$cmd_python" "$vhome"
+  set +u; source $vhome/bin/activate; set -u
+  hash -r
+  echo "FOUND: $(which python)"
+  echo "FOUND: $(which pip)"
+  "$shome/bin/puddle" install virtualenv
+  echo "FOUND: $(which virtualenv)"
+  rm -rf "$vhome.bootstrap"
 }
 
 require sub "$BASH_SOURCE" "$@"
