@@ -7,11 +7,13 @@ RMAKE := unset BUNDLE_GEMFILE BUNDLE_BIN_PATH GEM_HOME GEM_PATH _ORIGINAL_GEM_PA
 
 all: ready
 
-ready: bin/jq bin/python
+ready:
 	git submodule update --init --recursive
 	cd vendor/projects/boxcar && $(RMAKE)
 	cd vendor/projects/offline && $(RMAKE)
 	bundle check --path vendor/bundle 2>&1 >/dev/null || bundle --local --path vendor/bundle
+	$(MAKE) bin/python
+	$(MAKE) bin/jq
 
 bin/python:
 	bin/puddle init
