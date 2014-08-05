@@ -27,4 +27,4 @@ bin/jq: bin/python
 	cd vendor/projects/jq && ./configure
 	cd vendor/projects/jq && make
 	mv vendor/projects/jq/jq bin/jq
-	cd vendor/projects/jq.py && python setup.py install
+	source bin/activate && cd vendor/projects/jq.py && python setup.py install
