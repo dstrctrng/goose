@@ -1,0 +1,13 @@
+paramiko==1.10.6
+boto
+Sphinx
+sphinx_rtd_theme
+ansible
+awscli
+consulate
+python-keyczar==0.71c
+passlib
+nose
+mock
+tox
+ipython

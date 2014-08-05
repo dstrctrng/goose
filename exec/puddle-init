@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+#/ NAME
+#/     puddle-init -- make a Python virtualenv
+#/
+#/ SYNOPSIS
+#/     puddle init
+
+# figure out the project root under which bin, lib live
+shome="$(cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+
+# load a jason bourne library
+source _jason
+
+DEFINE_string python "python" "Path to python" p
+
+# entry point
+function main {
+  local vhome="."
+
+  (set +f; rm -f "$vhome/bin/python"* "$vhome/bin/virtualenv"* "$vhome/bin/pip"*)
+  (set +f; rm -rf "$vhome/lib/python"* "$vhome/include/python"*)
+  local cmd_python="$(type -p $FLAGS_python)"
+  echo "FOUND: $cmd_python"
+  echo "FOUND: $(which pip)"
+  echo "FOUND: $(which virtualenv)"
+  virtualenv -p "$cmd_python" --no-setuptools "$vhome"
+  set +u; source $shome/bin/activate; set -u
+  hash -r
+  echo "FOUND: $(which python)"
+  echo "FOUND: $(which pip)"
+  "$shome/bin/puddle" install virtualenv
+  hash -r
+  echo "FOUND: $(which virtualenv)"
+  virtualenv -p "$cmd_python" "$vhome"
+  echo "FOUND: $(which python)"
+  echo "FOUND: $(which pip)"
+}
+
+require sub "$BASH_SOURCE" "$@"
