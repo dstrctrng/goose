@@ -17,7 +17,7 @@ bin/python:
 	bin/puddle init
 	bin/puddle install
 
-bin/jq:
+bin/jq: bin/python
 	git submodule update --init --recursive
 	cd vendor/projects/jq && libtoolize
 	cd vendor/projects/jq && aclocal
