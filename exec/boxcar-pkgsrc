@@ -19,7 +19,7 @@ function remote_build {
   mkdir -p pkgsrc pkg || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 pkgsrc pkg
 
   case "$BUILD_IMAGE_PHASE" in
-    bmake)
+    bmake|build)
       rm -rf pkgsrc pkg || true
       git clone git@github.com:destructuring/pkgsrc pkgsrc
       ;;
