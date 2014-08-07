@@ -34,7 +34,7 @@ function remote_build {
       make -f Makefile.goose SH=/bin/bash bmake
       ;;
     build)
-      make -f Makefile.goose SH=/bin/bash "$PKG_HOME/bin/bmake"
+      make -f Makefile.goose SH=/bin/bash bmake
       make -f Makefile.goose SH=/bin/bash packages
       ;;
     *)
