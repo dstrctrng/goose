@@ -3,7 +3,6 @@
 export GOOSE="${GOOSE:=$(unset CDPATH; cd -P -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)}"
 export VAULT="${VAULT:=$(unset CDPATH; cd -P -- "$GOOSE/.." && pwd -P)/vault}"
 export PKG_HOME="${PKG_HOME:=$(unset CDPATH; cd -P -- "$GOOSE/.." && pwd -P)/pkg}"
-export YARVM="${YARVM:=$(unset CDPATH; cd -P -- "$GOOSE/.." && pwd -P)/yarvm}"
 export GOOSE="${GOOSE:=$(unset CDPATH; cd -P -- "$GOOSE/.." && pwd -P)/goose}"
 
 export BOXCAR="$GOOSE"
@@ -25,8 +24,6 @@ require_
 export PATH="$GOOSE/bin:$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
 
 unset BUNDLE_GEMFILE RUBYOPT
-
-source $YARVM/libexec/_yarvm
 
 export DOCKER_OPT=
 export DOCKER_CMD=/sbin/init
