@@ -13,10 +13,6 @@ function remote_install {
       ;;
   esac
 
-  export PKG_HOME="$(pwd)/pkg"
-
-  PATH="$PKG_HOME/bin:$PKG_HOME/sbin:$PATH"
-
   mkdir -p goose || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 goose
   rm -rf goose || true
   git clone https://github.com/destructuring/goose goose

@@ -1,2 +1,5 @@
 https://help.ubuntu.com/community/UEC/Images/KVMKernelOptions
 https://help.ubuntu.com/14.04/installation-guide/amd64/index.html
+install xcode command line tools
+bundle config build.nokogiri --use-system-libraries --with-xml2-config="$PKG_HOME/bin/xml2-config" --with-xslt-config="$PKG_OME/bin/xslt-config" --with-opt-dir=$PKG_HOME
+env ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future bundle update

@@ -107,3 +107,11 @@
 /lib/python2.7/
 /man/
 /share/
+/bin/circus-plugin
+/bin/circus-top
+/bin/circusctl
+/bin/circusd
+/bin/circusd-stats
+/bin/keyring
+/bin/nova
+/bin/pybabel

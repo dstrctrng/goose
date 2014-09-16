@@ -6,4 +6,10 @@ gemspec
 gem "alox"
 gem "alox-jason"
 
+# rackspace
+gem "rumm"
+
+# digital ocean
+gem 'tugboat'
+
 # vim: set ft=ruby:
