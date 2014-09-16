@@ -10,7 +10,6 @@ all:
 	$(MAKE) projects
 	$(MAKE) ruby
 	$(MAKE) python
-	$(MAKE) jq
 
 git:
 	git submodule update --init --recursive
