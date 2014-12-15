@@ -43,6 +43,17 @@ function container_build {
   ${sudo} dpkg-divert --local --rename --add /sbin/initctl
   sudo ln -nfs /bin/true $prefix/sbin/initctl
 
+  local tmp_sshd="$(mktemp -t XXXXXX)"
+  cat > "$tmp_sshd" << __EOF
+#!/usr/bin/env bash
+dpkg-reconfigure openssh-server
+mkdir -p /var/run/sshd
+exec /usr/sbin/sshd -D
+__EOF
+
+  sudo install -o root -g root -m 0755 "$tmp_sshd" $prefix/usr/sbin/sshd.docker
+  rm -f "$tmp_sshd"
+
   # update install with server distribution
   sudo -E chroot image apt-get install -y minimal^ server^ standard^
 
@@ -139,15 +150,9 @@ system_info:
 __EOF
   sudo install -o root -g root -m 0600 $tmp_cloud $prefix/var/lib/cloud/seed/nocloud/user-data
 
-  # run and verify cloud init
-  if ${sudo} cloud-init init --local; then
-    ${sudo} cloud-init modules --mode config
-    ${sudo} cloud-init modules --mode final
-  else
-    ${sudo} cloud-init start-local || true
-    ${sudo} cloud-init-cfg all config || true
-    ${sudo} cloud-init-cfg all final || true
-  fi
+  ${sudo} cloud-init init --local
+  ${sudo} cloud-init modules --mode config
+  ${sudo} cloud-init modules --mode final
 
   # cleanup
   rm -f $tmp_cloud
@@ -162,9 +167,9 @@ __EOF
   ${sudo} cat /root/.ssh/authorized_keys /home/ubuntu/.ssh/authorized_keys
 
   # enable upstart in image
-  sudo rm -f $prefix/sbin/initctl
-  sudo mv $prefix/sbin/initctl.distrib $prefix/sbin/initctl
-  sudo rm -f $prefix/usr/sbin/policy-rc.d
+  #sudo rm -f $prefix/sbin/initctl
+  #sudo mv $prefix/sbin/initctl.distrib $prefix/sbin/initctl
+  #sudo rm -f $prefix/usr/sbin/policy-rc.d
 
   # docker image
   sudo tar cfp docker-${nm_distro}.tar -C image .
@@ -173,39 +178,13 @@ __EOF
 function container_install {
   local nm_distro="$1"; shift
 
-  sudo apt-key add - <<__EOF
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-mQENBFIOqEUBCADsvqwefcPPQArws9jHF1PaqhXxkaXzeE5uHHtefdoRxQdjoGok
-HFmHWtCd9zR7hDpHE7Q4dwJtSFWZAM3zaUtlvRAgvMmfLm08NW9QQn0CP5khjjF1
-cgckhjmzQAzpEHO5jiSwl0ZU8ouJrLDgmbhT6knB1XW5/VmeECqKRyhlEK0zRz1a
-XV+4EVDySlORmFyqlmdIUmiU1/6pKEXyRBBVCHNsbnpZOOzgNhfMz8VE8Hxq7Oh8
-1qFaFXjNGCrNZ6xr/DI+iXlsZ8urlZjke5llm4874N8VPUeFQ/szmsbSqmCnbd15
-LLtrpvpSMeyRG+LoTYvyTG9QtAuewL9EKJPfABEBAAG0OURvY2tlciBSZWxlYXNl
-IFRvb2wgKHJlbGVhc2Vkb2NrZXIpIDxkb2NrZXJAZG90Y2xvdWQuY29tPokBOAQT
-AQIAIgUCUg6oRQIbLwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQ2Fdqi6iN
-IenM+QgAnOiozhHDAYGO92SmZjib6PK/1djbrDRMreCT8bnzVpriTOlEtARDXsmX
-njKSFa+HTxHi/aTNo29TmtHDfUupcfmaI2mXbZt1ixXLuwcMv9sJXKoeWwKZnN3i
-9vAM9/yAJz3aq+sTXeG2dDrhZr34B3nPhecNkKQ4v6pnQy43Mr59Fvv5CzKFa9oZ
-IoZf+Ul0F90HSw5WJ1NsDdHGrAaHLZfzqAVrqHzazw7ghe94k460T8ZAaovCaTQV
-HzTcMfJdPz/uTim6J0OergT9njhtdg2ugUj7cPFUTpsxQ1i2S8qDEQPL7kabAZZo
-Pim0BXdjsHVftivqZqfWeVFKMorchQ==
-=fRgo
------END PGP PUBLIC KEY BLOCK-----
-__EOF
-  echo "deb http://get.docker.io/ubuntu docker main" | sudo tee /etc/apt/sources.list.d/docker.list
-
-  echo "deb http://us.archive.ubuntu.com/ubuntu/ ${nm_distro}-backports main restricted universe multiverse" | sudo tee /etc/apt/sources.list.d/ubuntu_${nm_distro}_backports.list
-
   sudo -E aptitude update
 
-  sudo env DEBIAN_FRONTEND=noninteractive apt-get -y install --install-recommends lxc/precise-backports
-  sudo env DEBIAN_FRONTEND=noninteractive apt-get -y install --install-recommends lxc-docker
+  sudo env DEBIAN_FRONTEND=noninteractive apt-get -y install --install-recommends docker.io
   sudo usermod -a -G docker ubuntu
 
   echo 'DOCKER_OPTS="-s=devicemapper"' | sudo tee /etc/default/docker
-  sudo restart docker
+  sudo restart docker.io
 }
 
 if [[ "$#" = 0 ]]; then
@@ -241,7 +220,7 @@ function main {
   case "${BUILD_IMAGE_PHASE:-}" in
     install)
       standard_hook "$bootstrap" "$@"
-      cat ${VAULT}/images/docker-${OVERRIDE_release}.tar | ssh -F $pth_ssh_config default docker import - "${OVERRIDE_release}"
+      cat ${VAULT}/images/docker-${OVERRIDE_release}.tar | ssh -F $pth_ssh_config default sudo docker import - "${OVERRIDE_release}"
       ;;
     build)
       standard_hook "$bootstrap" "$@"

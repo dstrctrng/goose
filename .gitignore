@@ -115,3 +115,14 @@
 /bin/keyring
 /bin/nova
 /bin/pybabel
+/bin/keystone
+/bin/netaddr
+/bin/build-pysnmp-mib
+/bin/epylint
+/bin/libsmi2pysnmp
+/bin/pylint
+/bin/pylint-gui
+/bin/pyreverse
+/bin/pytest
+/bin/rebuild-pysnmp-mibs
+/bin/symilar

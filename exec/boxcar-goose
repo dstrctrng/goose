@@ -6,26 +6,11 @@
 function remote_install {
   set -exfu
 
-  case "$(uname -s)" in
-    Linux)
-      sudo -E aptitude update
-      sudo -E aptitude install -y flex python-{dev,pip,setuptools,virtualenv}
-      ;;
-  esac
-
   mkdir -p goose || sudo install -o $(id -un) -g $(id -gn) -d -m 0755 goose
   rm -rf goose || true
   git clone https://github.com/destructuring/goose goose
   cd goose
-
-  source ../yarvm/libexec/_yarvm
   make
-
-  bin/shell vagrant box add static boxes/static.box || true
-  bin/shell vagrant box add precise boxes/dcker.box || true
-  bin/shell vagrant box add precise boxes/aws.box || true
-  bin/shell vagrant box add precise boxes/static.box || true
-  bin/shell vagrant box add precise-clean boxes/static.box || true
 }
 
 if [[ "$#" = 0 ]]; then

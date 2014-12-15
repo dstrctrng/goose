@@ -5,6 +5,9 @@ function require_goose {
   pushd $shome > /dev/null
   source $shome/exec/_goose
   popd > /dev/null
+
+  PATH=$PATH:$shome/bin:$shome/exec
 }
 
 require_goose
+
