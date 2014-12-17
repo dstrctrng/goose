@@ -1,6 +1,3 @@
 [submodule "vendor/projects/boxcar"]
 	path = vendor/projects/boxcar
 	url = git@github.com:destructuring/boxcar
-[submodule "vendor/projects/jq"]
-	path = vendor/projects/jq
-	url = https://github.com/stedolan/jq
