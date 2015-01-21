@@ -10,4 +10,3 @@ function require_goose {
 }
 
 require_goose
-
