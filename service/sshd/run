@@ -1,3 +1,3 @@
 #!/bin/sh
 cd ${GOOSE}
-exec chpst -e ${GOOSE}/service/sshd/env ${GOOSE}/bin/shell ${GOOSE}/vendor/projects/offline/bin/setup-sshd ${GOOSE}/config/sshd.port ${GOOSE}/config/authorized_keys
+exec chpst -e ${GOOSE}/service/sshd/env ${GOOSE}/vendor/projects/offline/bin/setup-sshd ${GOOSE}/config/sshd.port ${GOOSE}/config/authorized_keys

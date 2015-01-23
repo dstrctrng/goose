@@ -2,4 +2,4 @@
 cd ${GOOSE}
 chmod g-w ${GOOSE} ${GOOSE}/config
 touch ${GOOSE}/config/authorized_keys
-exec chpst -e ${GOOSE}/service/agent/env ${GOOSE}/bin/shell ${GOOSE}/vendor/projects/offline/bin/setup-ssh-agent ${GOOSE}/config/ssh_agent ${GOOSE}/config/authorized_keys
+exec chpst -e ${GOOSE}/service/agent/env ${GOOSE}/vendor/projects/offline/bin/setup-ssh-agent ${GOOSE}/config/ssh_agent ${GOOSE}/config/authorized_keys

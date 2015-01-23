@@ -1,3 +1,6 @@
 [submodule "vendor/projects/boxcar"]
 	path = vendor/projects/boxcar
 	url = git@github.com:destructuring/boxcar
+[submodule "vendor/projects/offline"]
+	path = vendor/projects/offline
+	url = https://github.com/dstrctrng/offline-install

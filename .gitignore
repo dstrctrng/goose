@@ -126,3 +126,6 @@
 /bin/pytest
 /bin/rebuild-pysnmp-mibs
 /bin/symilar
+/service/*/log/lock
+/service/*/log/current
+/service/*/log/@*
